@@ -1,8 +1,12 @@
-function Chart() {
+import React, { useState } from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import HighchartsReact from "highcharts-react-official";
+import Highcharts from "highcharts";
+function Chart({ options }) {
   return (
-    <div>
-      <h2>Chart</h2>
-    </div>
+    <Container fluid>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </Container>
   );
 }
 export default Chart;
