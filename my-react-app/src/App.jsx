@@ -1,6 +1,7 @@
 import Header from "./Header";
 import Footer from "./Footer";
 import Search from "./Search/Search";
+import Watchlist from "./Watchlist/Watchlist";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
     <div className="App">
       <Header />
       <Search />
+      <Watchlist />
       <Footer />
     </div>
   );
