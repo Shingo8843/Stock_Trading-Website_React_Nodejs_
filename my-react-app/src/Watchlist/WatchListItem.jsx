@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Card, Button } from "react-bootstrap";
 
@@ -24,17 +24,19 @@ const WatchlistItem = ({
   return (
     <Card className="mb-3" onClick={() => onNavigate(ticker)}>
       <Card.Body>
-        <Button
-          variant="outline-secondary"
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove(ticker);
-          }}
-          className="float-end"
-        >
-          X
-        </Button>
+        <div className="d-flex justify-content-between align-items-center">
+          <Button
+            variant="outline-secondary"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove(ticker);
+            }}
+            className="close-button"
+          >
+            X
+          </Button>
+        </div>
         <div className="d-flex justify-content-between align-items-center">
           <div>
             <Card.Title>{ticker}</Card.Title>

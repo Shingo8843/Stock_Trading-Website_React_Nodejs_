@@ -1,0 +1,74 @@
+import { React, useState, useEffect } from "react";
+import { Container } from "react-bootstrap";
+import PortfolioItem from "./PortfolioItem";
+function Portfolio() {
+  const [portfoliodata, setPortfolioData] = useState([]);
+  const [wallet, setWallet] = useState(100000);
+  useEffect(() => {
+    fetchPortfolio()
+      .then((data) => {
+        setPortfolioData(data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch portfolio:", error);
+      });
+  }, []);
+  function fetchPortfolio() {
+    // Assume fetchPortfolio is a function that retrieves the portfolio from MongoDB Atlas
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve([
+          {
+            ticker: "AAPL",
+            name: "Apple Inc.",
+            quantity: 10,
+            avgCost: 150,
+            currentPrice: 155,
+            marketValue: 1550,
+            change: 50,
+          },
+          {
+            ticker: "GOOGL",
+            name: "Alphabet Inc.",
+            quantity: 5,
+            avgCost: 2000,
+            currentPrice: 2100,
+            marketValue: 10500,
+            change: 500,
+          },
+        ]);
+      }, 1000);
+    });
+  }
+
+  function handleBuy(ticker) {
+    console.log("Buying", ticker);
+    // Here you will implement the buy logic
+  }
+
+  function handleSell(ticker) {
+    console.log("Selling", ticker);
+    // Here you will implement the sell logic
+  }
+  return (
+    <Container className="portfolio">
+      <h2>My Portfolio</h2>
+      <p>Money in Wallet: {wallet}</p>
+      {portfoliodata.map((item) => (
+        <PortfolioItem
+          key={item.ticker}
+          ticker={item.ticker}
+          name={item.name}
+          quantity={item.quantity}
+          avgCost={item.avgCost}
+          currentPrice={item.currentPrice}
+          marketValue={item.marketValue}
+          change={item.change}
+          onBuy={handleBuy}
+          onSell={handleSell}
+        />
+      ))}
+    </Container>
+  );
+}
+export default Portfolio;

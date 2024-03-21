@@ -8,3 +8,9 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
 }
+.main-content {
+  padding-bottom: 60px;
+}
+.close-button {
+  align-items: flex-start;
+}

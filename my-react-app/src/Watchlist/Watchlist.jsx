@@ -1,6 +1,6 @@
-import React from "react";
-import WatchListItem from "./WatchListItem";
-import { Alert, Spinner } from "react-bootstrap";
+import { React, useState, useEffect } from "react";
+import WatchlistItem from "./WatchListItem";
+import { Alert, Container, Spinner } from "react-bootstrap";
 function Watchlist() {
   const [watchlist, setWatchlist] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ function Watchlist() {
   }
 
   return (
-    <div className="container mt-5">
+    <Container>
       <h2>My Watchlist</h2>
       {watchlist.map((item) => (
         <WatchlistItem
@@ -58,14 +58,33 @@ function Watchlist() {
           onNavigate={navigateToDetails}
         />
       ))}
-    </div>
+    </Container>
   );
 }
 const fetchWatchlist = async () => {
   // fetch watchlist from MongoDB Atlas
+  // var list = await fetch("http://localhost:5038/watchlist/GET");
+  // return list;
+  return [
+    {
+      ticker: "AAPL",
+      companyName: "Apple Inc.",
+      price: 123.45,
+      change: 1.23,
+      percentageChange: 1.0,
+    },
+    {
+      ticker: "GOOGL",
+      companyName: "Alphabet Inc.",
+      price: 234.56,
+      change: -2.34,
+      percentageChange: -1.0,
+    },
+  ];
 };
 
 const removeFromWatchlist = async (ticker) => {
   // remove an item from the watchlist in MongoDB Atlas
+  await fetch(`http://localhost:5038/watchlist/DELETE/${ticker}`);
 };
 export default Watchlist;
