@@ -1,18 +1,29 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import PortfolioItem from "./PortfolioItem";
+
 function Portfolio() {
+  const initialWallet = 100000;
   const [portfoliodata, setPortfolioData] = useState([]);
-  const [wallet, setWallet] = useState(100000);
+  const [wallet, setWallet] = useState(initialWallet);
+
   useEffect(() => {
     fetchPortfolio()
       .then((data) => {
         setPortfolioData(data);
+        updateWallet(data);
       })
       .catch((error) => {
         console.error("Failed to fetch portfolio:", error);
       });
   }, []);
+
+  function updateWallet(portfolioItems) {
+    const totalInvestment = portfolioItems.reduce((acc, item) => {
+      return acc + item.quantity * item.avgCost;
+    }, 0);
+    setWallet(initialWallet - totalInvestment);
+  }
   function fetchPortfolio() {
     // Assume fetchPortfolio is a function that retrieves the portfolio from MongoDB Atlas
     return new Promise((resolve, reject) => {
@@ -52,8 +63,8 @@ function Portfolio() {
   }
   return (
     <Container className="portfolio">
-      <h2>My Portfolio</h2>
-      <p>Money in Wallet: {wallet}</p>
+      <h2 className="text-start">My Portfolio</h2>
+      <p className="text-start">Money in Wallet: {wallet}</p>
       {portfoliodata.map((item) => (
         <PortfolioItem
           key={item.ticker}

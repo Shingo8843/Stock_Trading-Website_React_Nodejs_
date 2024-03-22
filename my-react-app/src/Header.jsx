@@ -13,9 +13,9 @@ function Header() {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
         <Nav className="ml-auto">
-          <Nav.Link href="#search">Search</Nav.Link>
-          <Nav.Link href="#watchlist">Watchlist</Nav.Link>
-          <Nav.Link href="#portfolio">Portfolio</Nav.Link>
+          <Nav.Link href="/search">Search</Nav.Link>
+          <Nav.Link href="/watchlist">Watchlist</Nav.Link>
+          <Nav.Link href="/portfolio">Portfolio</Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
