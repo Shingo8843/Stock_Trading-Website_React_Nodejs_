@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import PortfolioItem from "./PortfolioItem";
-
+import Header from "../Header";
 function Portfolio() {
   const initialWallet = 100000;
   const [portfoliodata, setPortfolioData] = useState([]);
@@ -62,23 +62,26 @@ function Portfolio() {
     // Here you will implement the sell logic
   }
   return (
-    <Container className="portfolio">
-      <h2 className="text-start">My Portfolio</h2>
-      <p className="text-start">Money in Wallet: {wallet}</p>
-      {portfoliodata.map((item) => (
-        <PortfolioItem
-          key={item.ticker}
-          ticker={item.ticker}
-          name={item.name}
-          quantity={item.quantity}
-          avgCost={item.avgCost}
-          currentPrice={item.currentPrice}
-          marketValue={item.marketValue}
-          change={item.change}
-          onBuy={handleBuy}
-          onSell={handleSell}
-        />
-      ))}
+    <Container>
+      <Header />
+      <Container className="main-content">
+        <h2 className="text-start">My Portfolio</h2>
+        <p className="text-start">Money in Wallet: {wallet}</p>
+        {portfoliodata.map((item) => (
+          <PortfolioItem
+            key={item.ticker}
+            ticker={item.ticker}
+            name={item.name}
+            quantity={item.quantity}
+            avgCost={item.avgCost}
+            currentPrice={item.currentPrice}
+            marketValue={item.marketValue}
+            change={item.change}
+            onBuy={handleBuy}
+            onSell={handleSell}
+          />
+        ))}
+      </Container>
     </Container>
   );
 }

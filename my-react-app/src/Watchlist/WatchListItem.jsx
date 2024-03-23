@@ -1,7 +1,7 @@
 import { React, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Card, Button } from "react-bootstrap";
-
+import { useNavigate } from "react-router-dom";
 const WatchlistItem = ({
   ticker,
   companyName,
@@ -20,9 +20,12 @@ const WatchlistItem = ({
 
   // Formatting percentage change to 2 decimal places
   const formattedPercentageChange = parseFloat(percentageChange).toFixed(2);
-
+  const navigate = useNavigate();
+  const handleCardClick = () => {
+    navigate(`/search/${ticker}`);
+  };
   return (
-    <Card className="mb-3" onClick={() => onNavigate(ticker)}>
+    <Card className="mb-3" onClick={handleCardClick}>
       <Card.Body>
         <div className="d-flex justify-content-between align-items-center">
           <Button

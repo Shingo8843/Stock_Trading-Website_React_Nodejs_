@@ -1,16 +1,25 @@
-import Header from "./Header";
+// MainContent.js
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Footer from "./Footer";
-import MainContent from "./MainContent";
-import "bootstrap/dist/css/bootstrap.min.css";
+import Search from "./Search/Search";
+import Watchlist from "./Watchlist/Watchlist";
+import Portfolio from "./Portfolio/Portfolio";
 
-function App() {
+function MainContent() {
+  const router = createBrowserRouter([
+    { path: "/search", element: <Search /> },
+    { path: "/search/:ticker", element: <Search /> },
+    { path: "/watchlist", element: <Watchlist /> },
+    { path: "/portfolio", element: <Portfolio /> },
+  ]);
+
   return (
-    <div className="App">
-      <Header />
-      <MainContent />
+    <>
+      <RouterProvider router={router}></RouterProvider>
       <Footer />
-    </div>
+    </>
   );
 }
 
-export default App;
+export default MainContent;

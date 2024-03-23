@@ -1,14 +1,14 @@
 import React from "react";
-
+import { Container } from "react-bootstrap";
 function Footer() {
   return (
     <footer className="text-dark footer mt-auto py-3 bg-light fixed-bottom">
-      <div className="container text-center">
+      <Container className="text-center">
         Powered by{" "}
         <a href="https://finnhub.io" className="text-blue">
           Finnhub
         </a>
-      </div>
+      </Container>
     </footer>
   );
 }

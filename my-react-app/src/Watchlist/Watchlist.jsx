@@ -1,15 +1,30 @@
 import { React, useState, useEffect } from "react";
 import WatchlistItem from "./WatchListItem";
 import { Alert, Container, Spinner } from "react-bootstrap";
+import Header from "../Header";
 function Watchlist() {
   const [watchlist, setWatchlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Assume fetchWatchlist is a function that retrieves the watchlist from MongoDB Atlas
     fetchWatchlist()
-      .then((data) => {
-        setWatchlist(data);
+      .then(async (data) => {
+        const promises = data.map((item) => {
+          return getQuote(item.ticker)
+            .then((quote) => {
+              item.price = quote.c;
+              item.change = quote.d;
+              item.percentageChange = quote.dp;
+              return item;
+            })
+            .catch((error) => {
+              console.error("Failed to fetch quote:", error);
+              return item;
+            });
+        });
+
+        const updatedData = await Promise.all(promises);
+        setWatchlist(updatedData);
         setLoading(false);
       })
       .catch((error) => {
@@ -19,72 +34,132 @@ function Watchlist() {
   }, []);
 
   const removeItemFromWatchlist = (ticker) => {
-    // Assume removeFromWatchlist is a function that removes the item from MongoDB Atlas
     removeFromWatchlist(ticker)
       .then(() => {
-        setWatchlist(watchlist.filter((item) => item.ticker !== ticker));
+        // Correctly filter the watchlist to remove the item with the given ticker
+        const updatedWatchlist = watchlist.filter(
+          (item) => item.ticker !== ticker
+        );
+        setWatchlist(updatedWatchlist); // Update the state with the filtered watchlist
       })
       .catch((error) => {
         console.error("Failed to remove item:", error);
       });
   };
-
-  const navigateToDetails = (ticker) => {
-    // Navigate to details route for the ticker
-    // For example: this.props.history.push(`/details/${ticker}`);
-    console.log("Navigate to:", `/details/${ticker}`);
-  };
-
   if (loading) {
-    return <Spinner animation="border" />;
-  }
-
-  if (!watchlist.length) {
-    return <Alert variant="info">Your watchlist is empty.</Alert>;
+    return (
+      <Container>
+        <Header />
+        <Container>
+          <Spinner animation="border" />
+        </Container>
+      </Container>
+    );
+  } else if (!watchlist.length) {
+    return (
+      <Container>
+        <Header />
+        <Container>
+          <h2>My Watchlist</h2>
+          <Alert variant="info">Your watchlist is empty.</Alert>
+        </Container>
+      </Container>
+    );
   }
 
   return (
     <Container>
-      <h2>My Watchlist</h2>
-      {watchlist.map((item) => (
-        <WatchlistItem
-          key={item.ticker}
-          ticker={item.ticker}
-          companyName={item.companyName}
-          price={item.price}
-          change={item.change}
-          percentageChange={item.percentageChange}
-          onRemove={removeItemFromWatchlist}
-          onNavigate={navigateToDetails}
-        />
-      ))}
+      <Header />
+      <Container className="main-content">
+        <div className=" my-3">
+          <h2>My Watchlist</h2>
+          {watchlist.map((item) => (
+            <WatchlistItem
+              key={item.ticker}
+              ticker={item.ticker}
+              companyName={item.name}
+              price={item.price}
+              change={item.change}
+              percentageChange={item.percentageChange}
+              onRemove={removeItemFromWatchlist}
+            />
+          ))}
+        </div>
+      </Container>
     </Container>
   );
 }
-const fetchWatchlist = async () => {
-  // fetch watchlist from MongoDB Atlas
-  // var list = await fetch("http://localhost:5038/watchlist/GET");
-  // return list;
-  return [
-    {
-      ticker: "AAPL",
-      companyName: "Apple Inc.",
-      price: 123.45,
-      change: 1.23,
-      percentageChange: 1.0,
+async function fetchWatchlist() {
+  const response = await fetch("http://localhost:8080/watchlist/GET", {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
-    {
-      ticker: "GOOGL",
-      companyName: "Alphabet Inc.",
-      price: 234.56,
-      change: -2.34,
-      percentageChange: -1.0,
-    },
-  ];
-};
+  });
 
-const removeFromWatchlist = async (ticker) => {
-  // remove an item from the watchlist in MongoDB Atlas
-  await fetch(`http://localhost:5038/watchlist/DELETE/${ticker}`);
-};
+  if (!response.ok) {
+    throw new Error("Network response was not ok.");
+  }
+
+  try {
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Error parsing JSON:", error);
+    throw new Error("Error parsing JSON.");
+  }
+}
+async function removeFromWatchlist(ticker) {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/watchlist/DELETE/${ticker}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Network response was not ok.");
+    }
+
+    const data = await response.json();
+    console.log(data.message);
+
+    return data;
+  } catch (error) {
+    console.error("Error during fetch operation:", error.message);
+    throw error;
+  }
+}
+
+async function getQuote(ticker) {
+  const response = await fetch(`http://localhost:8080/quote/${ticker}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Network response was not ok.");
+  }
+
+  try {
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Error parsing JSON:", error);
+    throw new Error("Error parsing JSON.");
+  }
+}
+
 export default Watchlist;

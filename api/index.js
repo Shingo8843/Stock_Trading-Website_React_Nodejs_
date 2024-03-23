@@ -1,17 +1,17 @@
 const Express = require("express");
-const { MongoClient } = require("mongodb");
 const cors = require("cors");
-const multer = require("multer");
+const { MongoClient } = require("mongodb");
 require("dotenv").config();
 const finnhub = require("finnhub");
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const app = Express();
+app.use(Express.json());
 app.use(cors());
 
 const CONNECT_STRING = process.env.CONNECT_STRING;
 const DATABASE_NAME = process.env.MONGO_DATABASE;
-const PORT = process.env.PORT || 5038;
+const PORT = process.env.PORT || 8080;
 
 const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY;
 const POLYGON_API_KEY = process.env.POLYGON_API_KEY;
@@ -46,20 +46,38 @@ app.get("/watchlist/GET", async (req, res) => {
 app.post("/watchlist/ADD", async (req, res) => {
   const database = app.locals.database;
   const watchlist = database.collection("watchlist");
-  const data = {
-    ticker: "AAPL",
-    name: "Apple Inc.",
-  };
+  const data = req.body;
   await watchlist.insertOne(data).then((result) => {
     res.json(result);
   });
 });
-app.delete("/watchlist/DELETE", async (req, res) => {
-  const database = app.locals.database;
-  const watchlist = database.collection("watchlist");
-  const ticker = req.params.ticker;
-  await watchlist.deleteOne({ ticker });
-  res.json({ ticker });
+app.delete("/watchlist/DELETE/:ticker", async (req, res) => {
+  try {
+    const database = app.locals.database;
+    const watchlist = database.collection("watchlist");
+    const { ticker } = req.params;
+
+    if (!ticker) {
+      return res.status(400).json({ error: "Ticker is required" });
+    }
+    console.log("Deleting ticker:", ticker);
+    const result = await watchlist.deleteOne({ ticker });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Ticker not found in watchlist" });
+    }
+
+    res.json({
+      success: true,
+      ticker,
+      message: "Ticker removed from watchlist",
+    });
+  } catch (error) {
+    console.error("Failed to remove ticker from watchlist:", error);
+    res.status(500).json({
+      error: "An error occurred while removing the ticker from the watchlist",
+    });
+  }
 });
 
 //4.1.1 Company's Description

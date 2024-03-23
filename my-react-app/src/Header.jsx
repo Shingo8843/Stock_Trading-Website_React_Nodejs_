@@ -1,5 +1,7 @@
 import React from "react";
 import { Navbar, Nav } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap"; // Import LinkContainer
+
 function Header() {
   return (
     <Navbar
@@ -9,16 +11,23 @@ function Header() {
       className="tertiary"
       fixed="top"
     >
-      <Navbar.Brand href="#home">Stock Search</Navbar.Brand>
+      <Navbar.Brand>Stock Search</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
         <Nav className="ml-auto">
-          <Nav.Link href="/search">Search</Nav.Link>
-          <Nav.Link href="/watchlist">Watchlist</Nav.Link>
-          <Nav.Link href="/portfolio">Portfolio</Nav.Link>
+          <LinkContainer to="/search">
+            <Nav.Link>Search</Nav.Link>
+          </LinkContainer>
+          <LinkContainer to="/watchlist">
+            <Nav.Link>Watchlist</Nav.Link>
+          </LinkContainer>
+          <LinkContainer to="/portfolio">
+            <Nav.Link>Portfolio</Nav.Link>
+          </LinkContainer>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
   );
 }
+
 export default Header;
