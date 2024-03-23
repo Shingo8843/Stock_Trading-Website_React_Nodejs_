@@ -79,7 +79,50 @@ app.delete("/watchlist/DELETE/:ticker", async (req, res) => {
     });
   }
 });
-
+app.get("/portfolio/GET", async (req, res) => {
+  const database = app.locals.database;
+  const portfolio = database.collection("portfolio");
+  const data = await portfolio.find({}).toArray((err, result) => {
+    if (err) {
+      res.status;
+    }
+    res.json(result);
+  });
+  res.json(data);
+});
+app.post("/portfolio/ADD", async (req, res) => {
+  const database = app.locals.database;
+  const portfolio = database.collection("portfolio");
+  const data = req.body;
+  await portfolio.insertOne(data).then((result) => {
+    res.json(result);
+  });
+});
+app.delete("/portfolio/DELETE/:ticker", async (req, res) => {
+  try {
+    const database = app.locals.database;
+    const portfolio = database.collection("portfolio");
+    const { ticker } = req.params;
+    if (!ticker) {
+      return res.status(400).json({ error: "Ticker is required" });
+    }
+    console.log("Deleting ticker:", ticker);
+    const result = await portfolio.deleteOne({ ticker });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Ticker not found in portfolio" });
+    }
+    res.json({
+      success: true,
+      ticker,
+      message: "Ticker removed from portfolio",
+    });
+  } catch (error) {
+    console.error("Failed to remove ticker from portfolio:", error);
+    res.status(500).json({
+      error: "An error occurred while removing the ticker from the portfolio",
+    });
+  }
+});
 //4.1.1 Company's Description
 app.get("/company/:ticker", async (req, res) => {
   const { ticker } = req.params;

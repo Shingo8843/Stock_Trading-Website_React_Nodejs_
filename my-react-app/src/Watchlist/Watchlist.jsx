@@ -2,6 +2,7 @@ import { React, useState, useEffect } from "react";
 import WatchlistItem from "./WatchListItem";
 import { Alert, Container, Spinner } from "react-bootstrap";
 import Header from "../Header";
+// const
 function Watchlist() {
   const [watchlist, setWatchlist] = useState([]);
   const [loading, setLoading] = useState(true);

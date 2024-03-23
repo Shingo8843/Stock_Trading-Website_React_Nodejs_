@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import PortfolioItem from "./PortfolioItem";
 import Header from "../Header";
+
 function Portfolio() {
   const initialWallet = 100000;
   const [portfoliodata, setPortfolioData] = useState([]);
@@ -10,7 +11,11 @@ function Portfolio() {
   useEffect(() => {
     fetchPortfolio()
       .then((data) => {
+        processPortfolio(data);
+      })
+      .then((data) => {
         setPortfolioData(data);
+
         updateWallet(data);
       })
       .catch((error) => {
@@ -23,33 +28,6 @@ function Portfolio() {
       return acc + item.quantity * item.avgCost;
     }, 0);
     setWallet(initialWallet - totalInvestment);
-  }
-  function fetchPortfolio() {
-    // Assume fetchPortfolio is a function that retrieves the portfolio from MongoDB Atlas
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve([
-          {
-            ticker: "AAPL",
-            name: "Apple Inc.",
-            quantity: 10,
-            avgCost: 150,
-            currentPrice: 155,
-            marketValue: 1550,
-            change: 50,
-          },
-          {
-            ticker: "GOOGL",
-            name: "Alphabet Inc.",
-            quantity: 5,
-            avgCost: 2000,
-            currentPrice: 2100,
-            marketValue: 10500,
-            change: 500,
-          },
-        ]);
-      }, 1000);
-    });
   }
 
   function handleBuy(ticker) {
@@ -84,5 +62,27 @@ function Portfolio() {
       </Container>
     </Container>
   );
+}
+async function fetchPortfolio() {
+  const response = await fetch("http://localhost:8080/portfolio/GET", {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Network response was not ok.");
+  }
+
+  try {
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Error parsing JSON:", error);
+    throw new Error("Error parsing JSON.");
+  }
 }
 export default Portfolio;
