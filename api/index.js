@@ -98,6 +98,15 @@ app.post("/portfolio/ADD", async (req, res) => {
     res.json(result);
   });
 });
+app.put("/portfolio/UPDATE/:ticker", async (req, res) => {
+  const database = app.locals.database;
+  const portfolio = database.collection("portfolio");
+  const { ticker } = req.params;
+  const data = req.body;
+  await portfolio.updateOne({ ticker }, { $set: data }).then((result) => {
+    res.json(result);
+  });
+});
 app.delete("/portfolio/DELETE/:ticker", async (req, res) => {
   try {
     const database = app.locals.database;

@@ -1,43 +1,206 @@
 import React, { useState, useEffect } from "react";
-import { Container } from "react-bootstrap";
+import { Container, Alert } from "react-bootstrap";
 import PortfolioItem from "./PortfolioItem";
 import Header from "../Header";
-
+import BuyStockModal from "./BuyStockModal";
+import SellStockModal from "./SellStockModal";
 function Portfolio() {
   const initialWallet = 100000;
   const [portfoliodata, setPortfolioData] = useState([]);
   const [wallet, setWallet] = useState(initialWallet);
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [showSellModal, setShowSellModal] = useState(false);
+  const [selectedStock, setSelectedStock] = useState(null);
   useEffect(() => {
-    fetchPortfolio()
-      .then((data) => {
-        processPortfolio(data);
-      })
-      .then((data) => {
-        setPortfolioData(data);
+    const fetchAndUpdatePortfolio = async () => {
+      try {
+        const data = await fetchPortfolio();
+        const pricePromises = data.map((item) =>
+          fetchStockPrice(item.ticker)
+            .then((price) => ({
+              ...item,
+              price,
+            }))
+            .catch((error) => {
+              console.error(
+                `Failed to fetch stock price for ${item.ticker}:`,
+                error
+              );
+              return { ...item, price: undefined };
+            })
+        );
 
-        updateWallet(data);
-      })
-      .catch((error) => {
+        const updatedPortfolio = await Promise.all(pricePromises);
+
+        setPortfolioData(updatedPortfolio);
+
+        updateWallet(updatedPortfolio);
+        setIsLoading(false);
+      } catch (error) {
         console.error("Failed to fetch portfolio:", error);
-      });
-  }, []);
+      }
+    };
 
+    fetchAndUpdatePortfolio();
+  }, []);
+  async function fetchPortfolio() {
+    const response = await fetch("http://localhost:8080/portfolio/GET", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok.");
+    }
+
+    try {
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+      throw new Error("Error parsing JSON.");
+    }
+  }
+  async function fetchStockPrice(ticker) {
+    const response = await fetch(`http://localhost:8080/quote/${ticker}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    console.log(data.c);
+    return data.c;
+  }
+  async function handleSell(ticker, quantityToSell) {
+    const stock = portfoliodata.find((item) => item.ticker === ticker);
+    if (!stock || quantityToSell > stock.quantity) {
+      console.error("Invalid sell operation");
+      return;
+    }
+
+    const sellTotal = quantityToSell * stock.price;
+    const newWalletBalance = wallet + sellTotal;
+    setWallet(newWalletBalance);
+
+    const newQuantity = stock.quantity - quantityToSell;
+    const updatedStock = {
+      ticker: stock.ticker,
+      quantity: newQuantity,
+      avgshare: stock.avgshare,
+      totalshare: newQuantity * stock.avgshare,
+      price: stock.price,
+    };
+
+    const updatedPortfolio = portfoliodata
+      .map((item) => (item.ticker === ticker ? updatedStock : item))
+      .filter((item) => item.quantity > 0);
+    setPortfolioData(updatedPortfolio);
+
+    await updatePortfolioInDatabase(ticker, updatedStock);
+  }
+  async function handleBuy(ticker, quantity, totalCost) {
+    if (totalCost > wallet) {
+      console.error("Insufficient funds for this purchase");
+      return;
+    }
+    const newWalletBalance = wallet - totalCost;
+    setWallet(newWalletBalance);
+    const stockExists = portfoliodata.find((item) => item.ticker === ticker);
+    let updatedPortfolio;
+    if (stockExists) {
+      const newQuantity = quantity + parseInt(stockExists.quantity);
+      const newAvgShare =
+        (stockExists.avgshare * stockExists.quantity + totalCost) / newQuantity;
+      totalCost = stockExists.avgshare * stockExists.quantity + totalCost;
+      updatedPortfolio = portfoliodata.map((item) =>
+        item.ticker === ticker
+          ? {
+              ...item,
+              quantity: newQuantity,
+              avgshare: newAvgShare,
+              totalshare: totalCost,
+            }
+          : item
+      );
+    } else {
+      const newStock = {
+        ticker,
+        quantity,
+        avgshare: totalCost / quantity,
+        name: selectedStock.name,
+        price: selectedStock.price,
+      };
+      updatedPortfolio = [...portfoliodata, newStock];
+    }
+
+    setPortfolioData(updatedPortfolio);
+
+    updatedPortfolio.forEach(async (stock) => {
+      await updatePortfolioInDatabase(stock.ticker, {
+        quantity: stock.quantity,
+        avgshare: stock.avgshare,
+      });
+    });
+  }
+  async function updatePortfolioInDatabase(ticker, data) {
+    console.log("Update data:", data);
+    try {
+      const response = await fetch(
+        `http://localhost:8080/portfolio/UPDATE/${ticker}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update portfolio in the database.");
+      }
+      const result = await response.json();
+      console.log("Update result:", result);
+    } catch (error) {
+      console.error("Failed to update portfolio:", error);
+    }
+  }
   function updateWallet(portfolioItems) {
     const totalInvestment = portfolioItems.reduce((acc, item) => {
-      return acc + item.quantity * item.avgCost;
+      return acc + item.quantity * item.avgshare;
     }, 0);
     setWallet(initialWallet - totalInvestment);
   }
-
-  function handleBuy(ticker) {
-    console.log("Buying", ticker);
-    // Here you will implement the buy logic
+  if (isLoading) {
+    return (
+      <Container>
+        <Header />
+        <Container className="main-content">
+          <h2 className="text-start">My Portfolio</h2>
+          <p className="text-start">Money in Wallet: {wallet}</p>
+          <p className="text-start">Loading...</p>
+        </Container>
+      </Container>
+    );
   }
-
-  function handleSell(ticker) {
-    console.log("Selling", ticker);
-    // Here you will implement the sell logic
+  if (!portfoliodata.length) {
+    return (
+      <Container>
+        <Header />
+        <Container className="main-content">
+          <h2 className="text-start">My Portfolio</h2>
+          <p className="text-start">Money in Wallet: {wallet}</p>
+          <Alert variant="warning">
+            Currently you have no stocks in your portfolio.
+          </Alert>
+        </Container>
+      </Container>
+    );
   }
   return (
     <Container>
@@ -51,38 +214,42 @@ function Portfolio() {
             ticker={item.ticker}
             name={item.name}
             quantity={item.quantity}
-            avgCost={item.avgCost}
-            currentPrice={item.currentPrice}
-            marketValue={item.marketValue}
-            change={item.change}
-            onBuy={handleBuy}
-            onSell={handleSell}
+            avgCost={item.avgshare}
+            currentPrice={item.price}
+            onBuy={() => {
+              setSelectedStock(item);
+              setShowBuyModal(true);
+            }}
+            onSell={() => {
+              setSelectedStock(item);
+              setShowSellModal(true);
+            }}
           />
         ))}
       </Container>
+      {selectedStock && (
+        <SellStockModal
+          show={showSellModal}
+          onHide={() => setShowSellModal(false)}
+          wallet={wallet}
+          ticker={selectedStock.ticker}
+          currentPrice={selectedStock.price}
+          quantityOwned={selectedStock.quantity}
+          onSell={(quantity) => handleSell(selectedStock.ticker, quantity)}
+        />
+      )}
+      {selectedStock && (
+        <BuyStockModal
+          show={showBuyModal}
+          onHide={() => setShowBuyModal(false)}
+          wallet={wallet}
+          ticker={selectedStock.ticker}
+          currentPrice={selectedStock.price}
+          onBuy={handleBuy}
+        />
+      )}
     </Container>
   );
 }
-async function fetchPortfolio() {
-  const response = await fetch("http://localhost:8080/portfolio/GET", {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
 
-  if (!response.ok) {
-    throw new Error("Network response was not ok.");
-  }
-
-  try {
-    const data = await response.json();
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error("Error parsing JSON:", error);
-    throw new Error("Error parsing JSON.");
-  }
-}
 export default Portfolio;

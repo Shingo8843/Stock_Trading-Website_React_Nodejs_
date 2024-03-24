@@ -1,5 +1,5 @@
-import React from "react";
-import { Card, Button, Table, Row, Col } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Card, Button, Row, Col } from "react-bootstrap";
 
 const PortfolioItem = ({
   ticker,
@@ -7,11 +7,14 @@ const PortfolioItem = ({
   quantity,
   avgCost,
   currentPrice,
-  marketValue,
-  change,
   onSell,
   onBuy,
 }) => {
+  if (!currentPrice) {
+    currentPrice = 0;
+  }
+  const marketValue = currentPrice * quantity;
+  const change = currentPrice - avgCost;
   const changeColor = change >= 0 ? "text-success" : "text-danger";
 
   return (
@@ -27,7 +30,7 @@ const PortfolioItem = ({
                 <Card.Text>Quantity: </Card.Text>
               </Col>
               <Col className="text-start" xs="6" md="6" lg="6">
-                <Card.Text>{quantity.toFixed(2)}</Card.Text>
+                <Card.Text>{quantity}</Card.Text>
               </Col>
             </Row>
             <Row className="justify-content-center">
