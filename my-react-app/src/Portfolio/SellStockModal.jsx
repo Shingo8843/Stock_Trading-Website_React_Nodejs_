@@ -21,6 +21,7 @@ function SellStockModal({
 
   const handleSellClick = () => {
     if (quantityToSell > 0 && quantityToSell <= quantityOwned) {
+      console.log("Selling", quantityToSell, "shares of", ticker, "for", total);
       onSell(ticker, quantityToSell, total);
       onHide();
     } else {

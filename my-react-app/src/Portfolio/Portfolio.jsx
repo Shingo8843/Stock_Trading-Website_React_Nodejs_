@@ -77,23 +77,34 @@ function Portfolio() {
     console.log(data.c);
     return data.c;
   }
-  async function handleSell(ticker, quantityToSell) {
+  async function handleSell(ticker, quantityToSell, totalCost) {
     const stock = portfoliodata.find((item) => item.ticker === ticker);
-    if (!stock || quantityToSell > stock.quantity) {
-      console.error("Invalid sell operation");
+    if (!stock) {
+      console.error("Stock not found in portfolio");
       return;
     }
 
-    const sellTotal = quantityToSell * stock.price;
+    // Ensure quantityToSell is a number
+    const quantityToSellNum = parseInt(quantityToSell, 10);
+    console.log("Quantity to sell:", quantityToSellNum);
+    if (isNaN(quantityToSellNum) || quantityToSellNum > stock.quantity) {
+      console.error(
+        "Invalid sell operation due to non-numeric quantity or quantity exceeds holdings"
+      );
+      return;
+    }
+
+    const sellTotal = quantityToSellNum * stock.price;
     const newWalletBalance = wallet + sellTotal;
     setWallet(newWalletBalance);
 
-    const newQuantity = stock.quantity - quantityToSell;
+    // Ensure stock.quantity is treated as a number and calculate new quantity
+    const newQuantity = parseInt(stock.quantity, 10) - quantityToSellNum;
     const updatedStock = {
       ticker: stock.ticker,
       quantity: newQuantity,
       avgshare: stock.avgshare,
-      totalshare: newQuantity * stock.avgshare,
+      totalshare: totalCost,
       price: stock.price,
     };
 
@@ -101,8 +112,31 @@ function Portfolio() {
       .map((item) => (item.ticker === ticker ? updatedStock : item))
       .filter((item) => item.quantity > 0);
     setPortfolioData(updatedPortfolio);
-
-    await updatePortfolioInDatabase(ticker, updatedStock);
+    if (newQuantity === 0) {
+      await deletePortfolioInDatabase(ticker);
+    } else {
+      await updatePortfolioInDatabase(ticker, updatedStock);
+    }
+  }
+  async function deletePortfolioInDatabase(ticker) {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/portfolio/DELETE/${ticker}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete portfolio in the database.");
+      }
+      const result = await response.json();
+      console.log("Delete result:", result);
+    } catch (error) {
+      console.error("Failed to delete portfolio:", error);
+    }
   }
   async function handleBuy(ticker, quantity, totalCost) {
     if (totalCost > wallet) {
@@ -172,7 +206,7 @@ function Portfolio() {
   }
   function updateWallet(portfolioItems) {
     const totalInvestment = portfolioItems.reduce((acc, item) => {
-      return acc + item.quantity * item.avgshare;
+      return acc + item.totalshare;
     }, 0);
     setWallet(initialWallet - totalInvestment);
   }
@@ -235,7 +269,7 @@ function Portfolio() {
           ticker={selectedStock.ticker}
           currentPrice={selectedStock.price}
           quantityOwned={selectedStock.quantity}
-          onSell={(quantity) => handleSell(selectedStock.ticker, quantity)}
+          onSell={handleSell}
         />
       )}
       {selectedStock && (
