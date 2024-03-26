@@ -16,6 +16,8 @@ function SearchResult({
   newsData,
   peerData,
   hourlyPrices,
+  insiderSentimentsData,
+  historicalEPSSurprises,
   onSell,
   onBuy,
 }) {
@@ -50,11 +52,12 @@ function SearchResult({
           <Charts historicalPrices={historicalPrices} />
         </Tab>
         <Tab eventKey="insights" title="Insights">
-          {/* <Insights
-            insiderSentimentsData={}
-            recommendationTrendsOptions={}
-            historicalEPSSurprisesOptions={}
-          /> */}
+          <Insights
+            companyData={companyData}
+            insiderSentimentsData={insiderSentimentsData}
+            recommendationTrend={recommendationTrend}
+            historicalEPSSurprises={historicalEPSSurprises}
+          />
         </Tab>
       </Tabs>
     </Container>

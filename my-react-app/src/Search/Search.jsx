@@ -22,7 +22,29 @@ function Search() {
   const [hourlyPrices, setHourlyPrices] = useState([]);
   const [peerData, setPeerData] = useState([]);
   const [historicalPrices, setHistoricalPrices] = useState([]);
+  const [insiderSentimentsData, setInsiderSentimentsData] = useState({});
+  const [historicalEPSSurprises, setHistoricalEPSSurprises] = useState({});
   const initialWallet = 100000;
+  async function fetchInsiderSentiments(ticker) {
+    try {
+      const response = await fetch(url + `insider/${ticker}`);
+      const data = await response.json();
+      setInsiderSentimentsData(data);
+      console.log("Insider Sentiments:", data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  async function fetchHistoricalEPSSurprises(ticker) {
+    try {
+      const response = await fetch(url + `earnings/${ticker}`);
+      const data = await response.json();
+      setHistoricalEPSSurprises(data);
+      console.log("Historical EPS Surprises:", data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   async function fetchNewsData(ticker) {
     try {
       const response = await fetch(url + `news/${ticker}`);
@@ -113,7 +135,7 @@ function Search() {
       const response = await fetch(url + `recommendation/${ticker}`);
       const data = await response.json();
       setRecommendationTrend(data);
-      // console.log(data);
+      console.log("Recommendation Trend:", data);
     } catch (error) {
       console.error(error);
     }
@@ -260,6 +282,8 @@ function Search() {
         fetchPeerData(searchValue),
         fetchNewsData(searchValue),
         fetchHistoricalPrices(searchValue),
+        fetchInsiderSentiments(searchValue),
+        fetchHistoricalEPSSurprises(searchValue),
       ];
       await Promise.all(dataFetchPromises);
       setSelectedStock(
@@ -354,6 +378,8 @@ function Search() {
                 peerData={peerData}
                 newsData={newsData}
                 historicalPrices={historicalPrices}
+                insiderSentimentsData={insiderSentimentsData}
+                historicalEPSSurprises={historicalEPSSurprises}
                 onBuy={() => setShowBuyModal(true)}
                 onSell={() => setShowSellModal(true)}
               />
