@@ -5,12 +5,14 @@ import TopNews from "./TopNews";
 import Charts from "./Chart";
 import Insights from "./Insights";
 import Current from "./Current";
+import ShareModal from "./ShareModal";
 
 function SearchResult({
   quoteData,
   companyData,
   portfolioData,
   recommendationTrend,
+  newsData,
   peerData,
   hourlyPrices,
   onSell,
@@ -41,7 +43,7 @@ function SearchResult({
           />
         </Tab>
         <Tab eventKey="news" title="Top News">
-          {/* <TopNews newsList={} /> */}
+          <TopNews newsData={newsData} />
         </Tab>
         <Tab eventKey="charts" title="Charts">
           {/* <Charts options={} /> */}

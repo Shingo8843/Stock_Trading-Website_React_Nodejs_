@@ -16,12 +16,22 @@ function Search() {
   const [showBuyModal, setShowBuyModal] = useState(false);
   const [showSellModal, setShowSellModal] = useState(false);
   const [recommendationTrend, setRecommendationTrend] = useState({});
+  const [newsData, setNewsData] = useState([{}]);
   const [wallet, setWallet] = useState(100000);
   const [selectedStock, setSelectedStock] = useState(null);
   const [hourlyPrices, setHourlyPrices] = useState([]);
   const [peerData, setPeerData] = useState([]);
   const initialWallet = 100000;
-
+  async function fetchNewsData(ticker) {
+    try {
+      const response = await fetch(url + `news/${ticker}`);
+      const data = await response.json();
+      setNewsData(data);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   async function fetchHourlyPrices(ticker) {
     try {
       const currentTime = new Date();
@@ -221,6 +231,7 @@ function Search() {
         fetchCompanyData(searchValue),
         fetchRecommendationTrend(searchValue),
         fetchPeerData(searchValue),
+        fetchNewsData(searchValue),
       ];
       await Promise.all(dataFetchPromises);
       setSelectedStock(
@@ -313,6 +324,7 @@ function Search() {
                 recommendationTrend={recommendationTrend}
                 hourlyPrices={hourlyPrices}
                 peerData={peerData}
+                newsData={newsData}
                 onBuy={() => setShowBuyModal(true)}
                 onSell={() => setShowSellModal(true)}
               />

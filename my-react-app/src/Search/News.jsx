@@ -1,27 +1,21 @@
 import React from "react";
 import { Card } from "react-bootstrap";
-import PropTypes from "prop-types";
 
-function News({ image, title, description, url }) {
+function News({ image, headline, source, datetime, summary, url, onClick }) {
+  const defaultImage = "https://via.placeholder.com/150";
   return (
-    <Card>
-      <Card.Img variant="top" src={image} />
+    <Card
+      onClick={() =>
+        onClick({ image, headline, source, datetime, summary, url })
+      }
+      style={{ cursor: "pointer" }}
+    >
       <Card.Body>
-        <Card.Title>{title}</Card.Title>
-        <Card.Text>{description}</Card.Text>
-        <Card.Link href={url} target="_blank">
-          Read More
-        </Card.Link>
+        <Card.Img src={image || defaultImage} />
+        <Card.Title>{headline}</Card.Title>
       </Card.Body>
     </Card>
   );
 }
-
-News.propTypes = {
-  image: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string,
-  url: PropTypes.string.isRequired,
-};
 
 export default News;

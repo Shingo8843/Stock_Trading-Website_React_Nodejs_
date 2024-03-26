@@ -1,19 +1,40 @@
+import { React, useState } from "react";
 import News from "./News";
-function TopNews(props) {
-  const { newsList } = props;
+import { Container } from "react-bootstrap";
+import ShareModal from "./ShareModal";
+function TopNews({ newsData: newsList }) {
+  newsList = newsList.slice(0, 1);
+  const [show, setShow] = useState(false);
+  const [selectedNews, setSelectedNews] = useState(newsList[0]);
+  function onclick(newsItem) {
+    setSelectedNews(newsItem);
+    setShow(true);
+  }
   return (
-    <div className="topnews">
+    <Container className="top-news">
       {newsList.map((newsItem, index) => (
         <News
-          key={index}
-          source={newsItem.Source}
-          publishedDate={newsItem.PublishedDate}
-          title={newsItem.Title}
-          description={newsItem.Description}
-          url={newsItem.Url}
+          image={newsItem.image}
+          headline={newsItem.headline}
+          source={newsItem.source}
+          datetime={newsItem.datetime}
+          summary={newsItem.summary}
+          url={newsItem.url}
+          onClick={onclick}
         />
       ))}
-    </div>
+      <ShareModal
+        show={show}
+        onHide={() => setShow(false)}
+        onShare={() => {}}
+        image={selectedNews.image}
+        headline={selectedNews.headline}
+        source={selectedNews.source}
+        datetime={selectedNews.datetime}
+        summary={selectedNews.summary}
+        url={selectedNews.url}
+      />
+    </Container>
   );
 }
 export default TopNews;
