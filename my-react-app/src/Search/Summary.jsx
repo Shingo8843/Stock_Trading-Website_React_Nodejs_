@@ -3,13 +3,20 @@ import { Container, Row, Col } from "react-bootstrap";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 function Summary({ quoteData, companyData, peerData, hourlyPrices }) {
+  let options = {};
+  if (!hourlyPrices) {
+    return <div>Loading...</div>;
+  }
   const hours = hourlyPrices.results.map(
     (result) => new Date(result.t).getHours() + ":00"
   );
   const prices = hourlyPrices.results.map((result) => result.c);
-  const options = {
+  options = {
     chart: {
       type: "line",
+    },
+    legend: {
+      enabled: false,
     },
     title: {
       text: `${companyData.ticker} Stock Price`,

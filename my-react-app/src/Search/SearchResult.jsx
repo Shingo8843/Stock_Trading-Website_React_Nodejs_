@@ -12,6 +12,7 @@ function SearchResult({
   companyData,
   portfolioData,
   recommendationTrend,
+  historicalPrices,
   newsData,
   peerData,
   hourlyPrices,
@@ -46,7 +47,7 @@ function SearchResult({
           <TopNews newsData={newsData} />
         </Tab>
         <Tab eventKey="charts" title="Charts">
-          {/* <Charts options={} /> */}
+          <Charts historicalPrices={historicalPrices} />
         </Tab>
         <Tab eventKey="insights" title="Insights">
           {/* <Insights

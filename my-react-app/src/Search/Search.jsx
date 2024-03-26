@@ -21,12 +21,39 @@ function Search() {
   const [selectedStock, setSelectedStock] = useState(null);
   const [hourlyPrices, setHourlyPrices] = useState([]);
   const [peerData, setPeerData] = useState([]);
+  const [historicalPrices, setHistoricalPrices] = useState([]);
   const initialWallet = 100000;
   async function fetchNewsData(ticker) {
     try {
       const response = await fetch(url + `news/${ticker}`);
       const data = await response.json();
       setNewsData(data);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  async function fetchHistoricalPrices(ticker) {
+    const queryParams = new URLSearchParams({
+      timeNumber: 1,
+      timeUnit: "day",
+      fromDate: new Date().getTime() - 63113904000,
+      toDate: new Date().getTime(),
+    });
+    console.log("Query Params", queryParams);
+    try {
+      const response = await fetch(
+        `${url}historical/${ticker}?${queryParams}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      setHistoricalPrices(data);
       console.log(data);
     } catch (error) {
       console.error(error);
@@ -232,6 +259,7 @@ function Search() {
         fetchRecommendationTrend(searchValue),
         fetchPeerData(searchValue),
         fetchNewsData(searchValue),
+        fetchHistoricalPrices(searchValue),
       ];
       await Promise.all(dataFetchPromises);
       setSelectedStock(
@@ -325,6 +353,7 @@ function Search() {
                 hourlyPrices={hourlyPrices}
                 peerData={peerData}
                 newsData={newsData}
+                historicalPrices={historicalPrices}
                 onBuy={() => setShowBuyModal(true)}
                 onSell={() => setShowSellModal(true)}
               />
