@@ -3,17 +3,7 @@ import { InputGroup, FormControl, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 
-function SearchBar() {
-  const [searchValue, setSearchValue] = React.useState("");
-
-  const handleSearch = () => {
-    console.log(`Searching for: ${searchValue}`);
-  };
-
-  const handleClear = () => {
-    setSearchValue("");
-  };
-
+function SearchBar({ searchValue, setSearchValue, handleSearch, handleClear }) {
   return (
     <div className="stock-search my-3 ">
       <InputGroup>

@@ -150,23 +150,23 @@ app.get("/company/:ticker", async (req, res) => {
 // 4.1.2 Company's Historical Data
 app.get("/historical/:ticker", async (req, res) => {
   const { ticker } = req.params;
-  const toDate = new Date();
-  const fromDate = new Date();
-  fromDate.setMonth(toDate.getMonth() - 6);
-  fromDate.setDate(toDate.getDate() - 1);
+  const { fromDate, toDate, timeNumber, timeUnit } = req.query;
 
-  const fromDateString = fromDate.toISOString().split("T")[0];
-  const toDateString = toDate.toISOString().split("T")[0];
+  const fromDateString = fromDate;
+  const toDateString = toDate;
 
-  const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${fromDateString}/${toDateString}?apiKey=${POLYGON_API_KEY}`;
-
+  const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/${timeNumber}/${timeUnit}/${fromDateString}/${toDateString}?apiKey=${process.env.POLYGON_API_KEY}`;
+  console.log(url);
   try {
     const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error from Polygon API: ${response.status}`);
+    }
     const historicalData = await response.json();
     res.json(historicalData);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error fetching historical data.");
+    res.status(500).send(`Error fetching historical data: ${error.message}`);
   }
 });
 

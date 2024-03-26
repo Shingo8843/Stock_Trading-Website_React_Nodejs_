@@ -3,19 +3,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
 import { faStar as faStarSolid } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
-function Current() {
+function Current({ quoteData, companyData, onBuy, onSell, portfolioData }) {
   const [star, setStar] = useState(false);
   const toggleStar = () => {
     setStar(!star);
   };
+  function numberToTime(t) {
+    const date = new Date(t * 1000);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+  const CurrentTime = new Date();
   return (
     <Card className="m-2" bg="light">
       <Card.Body>
         <Row>
           <Col xs={5} md={4} lg={4} className="my-auto">
-            <Card.Title>AAPL</Card.Title>
+            <Card.Title>{companyData.ticker}</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">
-              Apple Inc.{" "}
+              {companyData.name}
               <FontAwesomeIcon
                 icon={star ? faStarSolid : faStarRegular}
                 className={star ? "text-warning" : "text-muted"}
@@ -23,28 +34,55 @@ function Current() {
                 style={{ cursor: "pointer" }}
               />
             </Card.Subtitle>
-            <Card.Text className="text-muted">
-              NASDAQ NMS - GLOBAL MARKET
-            </Card.Text>
-            <Button variant="primary" size="sm">
+            <Card.Text className="text-muted">{companyData.exchange}</Card.Text>
+            <Button variant="primary" size="sm" onClick={onBuy}>
               Buy
-            </Button>
+            </Button>{" "}
+            {/* if portfolio data include the ticker */}
+            {portfolioData.find(
+              (item) => item.ticker === companyData.ticker
+            ) ? (
+              <Button variant="secondary" size="sm" onClick={onSell}>
+                Sell
+              </Button>
+            ) : (
+              ""
+            )}
           </Col>
           <Col xs md lg className="my-auto text-center">
-            <Card.Img src="https://logo.clearbit.com/apple.com" />
+            <Card.Img src={companyData.logo} />
           </Col>
 
           <Col xs={5} md={4} lg={4} className="my-auto text-success">
-            <Card.Text>184.56</Card.Text>
+            <Card.Text>{quoteData.c ? `$${quoteData.c}` : "$0.00"}</Card.Text>
             <Card.Text>
-              <i className="fa fa-arrow-up"></i> 2.24 (1.23%)
+              {quoteData.c ? (
+                quoteData.c > quoteData.pc ? (
+                  <i className="fa fa-arrow-up text-success"></i>
+                ) : (
+                  <i className="fa fa-arrow-down text-danger"></i>
+                )
+              ) : (
+                ""
+              )}
+              {quoteData.c ? `${quoteData.c} (${quoteData.dp})%` : ""}
             </Card.Text>
-            <Card.Text>2024-02-22 11:12:33</Card.Text>
+            <Card.Text>
+              <small>
+                {quoteData.c
+                  ? `${numberToTime(quoteData.t)}`
+                  : "No data available"}
+              </small>
+            </Card.Text>
           </Col>
         </Row>
         <Row>
           <Col className="text-muted text-center">
-            <small>Market is Open</small>
+            {Math.abs(CurrentTime - quoteData.t * 1000) < 300000 ? (
+              <small className="text-success">Market is open</small>
+            ) : (
+              <small className="text-danger">Market is closed</small>
+            )}
           </Col>
         </Row>
       </Card.Body>
