@@ -18,6 +18,10 @@ function SearchResult({
   hourlyPrices,
   insiderSentimentsData,
   historicalEPSSurprises,
+  addWatchlist,
+  removeWatchlist,
+  star,
+  setStar,
   onSell,
   onBuy,
 }) {
@@ -29,6 +33,10 @@ function SearchResult({
         quoteData={quoteData}
         companyData={companyData}
         portfolioData={portfolioData}
+        addWatchlist={addWatchlist}
+        removeWatchlist={removeWatchlist}
+        star={star}
+        setStar={setStar}
         onBuy={onBuy}
         onSell={onSell}
       />

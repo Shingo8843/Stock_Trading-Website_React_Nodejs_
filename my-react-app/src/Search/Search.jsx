@@ -5,6 +5,7 @@ import Header from "../Header";
 import { Container } from "react-bootstrap";
 import BuyStockModal from "../Portfolio/BuyStockModal";
 import SellStockModal from "../Portfolio/SellStockModal";
+import Watchlist from "../Watchlist/Watchlist";
 function Search() {
   const url = "http://localhost:8080/";
   const [searchValue, setSearchValue] = useState("");
@@ -24,7 +25,69 @@ function Search() {
   const [historicalPrices, setHistoricalPrices] = useState([]);
   const [insiderSentimentsData, setInsiderSentimentsData] = useState({});
   const [historicalEPSSurprises, setHistoricalEPSSurprises] = useState({});
+  const [star, setStar] = useState(false);
+  const [Watchlist, setWatchlist] = useState([]);
   const initialWallet = 100000;
+  useEffect(() => {
+    if (Watchlist.find((item) => item.ticker === searchValue)) {
+      setStar(true);
+    } else {
+      setStar(false);
+    }
+  }, [portfolioData, searchValue, Watchlist]);
+  async function fetchWatchlist() {
+    const response = await fetch(url + "watchlist/GET", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Network response was not ok.");
+    }
+    try {
+      const data = await response.json();
+      console.log("Watchlist:", data);
+      setWatchlist(data);
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+      throw new Error("Error parsing JSON.");
+    }
+  }
+  async function addWatchlist(ticker, name) {
+    let data = { ticker: ticker, name: name };
+    try {
+      const response = await fetch(url + `watchlist/ADD`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      console.log("Add watchlist result:", result);
+    } catch (error) {
+      console.error("Failed to add stock to watchlist:", error);
+    }
+  }
+  async function removeWatchlist(ticker) {
+    try {
+      const response = await fetch(url + `watchlist/DELETE/${ticker}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to remove stock from watchlist.");
+      }
+      const result = await response.json();
+      console.log("Remove watchlist result:", result);
+    } catch (error) {
+      console.error("Failed to remove stock from watchlist:", error);
+    }
+  }
   async function fetchsuggestions(searchValue) {
     try {
       const response = await fetch(url + `search/${searchValue}`);
@@ -162,9 +225,7 @@ function Search() {
       return;
     }
 
-    // Ensure quantityToSell is a number
     const quantityToSellNum = parseInt(quantityToSell, 10);
-    // console.log("Quantity to sell:", quantityToSellNum);
     if (isNaN(quantityToSellNum) || quantityToSellNum > stock.quantity) {
       console.error(
         "Invalid sell operation due to non-numeric quantity or quantity exceeds holdings"
@@ -195,7 +256,7 @@ function Search() {
     } else {
       await updatePortfolioInDatabase(ticker, updatedStock);
     }
-    setSelectedStock(updatedStock);
+    setSelectedStock(updatedPortfolio.find((item) => item.ticker === ticker));
   }
   async function deletePortfolioInDatabase(ticker) {
     try {
@@ -241,6 +302,18 @@ function Search() {
             }
           : item
       );
+      try {
+        const updatedStock = {
+          ticker: ticker,
+          quantity: newQuantity,
+          avgshare: newAvgShare,
+          totalshare: totalCost,
+          price: quoteData.c,
+        };
+        await updatePortfolioInDatabase(ticker, updatedStock);
+      } catch (error) {
+        console.error("Failed to update portfolio in database:", error);
+      }
     } else {
       const newStock = {
         ticker,
@@ -249,19 +322,46 @@ function Search() {
         name: selectedStock.name,
         price: quoteData.c,
       };
+      try {
+        await addPortfolioToDatabase(newStock);
+      } catch (error) {
+        console.error("Failed to add portfolio to database:", error);
+      }
       updatedPortfolio = [...portfolioData, newStock];
     }
 
     setportfolioData(updatedPortfolio);
-
+    console.log("Updated Portfolio:", updatedPortfolio);
     updatedPortfolio.forEach(async (stock) => {
       await updatePortfolioInDatabase(stock.ticker, {
         quantity: stock.quantity,
         avgshare: stock.avgshare,
       });
     });
-    setSelectedStock(updatedPortfolio.find((item) => item.ticker === ticker));
   }
+  async function addPortfolioToDatabase(data) {
+    try {
+      const response = await fetch("http://localhost:8080/portfolio/ADD", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add portfolio to the database.");
+      }
+      const result = await response.json();
+      // console.log("Add result:", result);
+    } catch (error) {
+      console.error("Failed to add portfolio:", error);
+    }
+  }
+  useEffect(() => {
+    setSelectedStock(portfolioData.find((item) => item.ticker === searchValue));
+    console.log("Selected Stock:", selectedStock);
+  }, [searchValue, portfolioData]);
+
   async function updatePortfolioInDatabase(ticker, data) {
     // console.log("Update data:", data);
     try {
@@ -313,8 +413,9 @@ function Search() {
 
   useEffect(() => {
     fetchPortfolio();
+    fetchWatchlist();
     updateWallet(portfolioData);
-  }, []);
+  }, [searchValue]);
   function updateWallet(portfolioItems) {
     const totalInvestment = portfolioItems.reduce((acc, item) => {
       return acc + item.totalshare;
@@ -396,6 +497,10 @@ function Search() {
                 historicalPrices={historicalPrices}
                 insiderSentimentsData={insiderSentimentsData}
                 historicalEPSSurprises={historicalEPSSurprises}
+                addWatchlist={addWatchlist}
+                removeWatchlist={removeWatchlist}
+                star={star}
+                setStar={setStar}
                 onBuy={() => setShowBuyModal(true)}
                 onSell={() => setShowSellModal(true)}
               />
@@ -406,9 +511,12 @@ function Search() {
               show={showSellModal}
               onHide={() => setShowSellModal(false)}
               wallet={wallet}
-              ticker={selectedStock.ticker}
+              ticker={searchValue}
               currentPrice={quoteData.c}
-              quantityOwned={selectedStock.quantity}
+              quantityOwned={
+                portfolioData.find((item) => item.ticker === searchValue)
+                  .quantity
+              }
               onSell={handleSell}
             />
           )}
@@ -417,7 +525,7 @@ function Search() {
               show={showBuyModal}
               onHide={() => setShowBuyModal(false)}
               wallet={wallet}
-              ticker={selectedStock.ticker}
+              ticker={searchValue}
               currentPrice={quoteData.c}
               onBuy={handleBuy}
             />

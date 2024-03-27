@@ -44,12 +44,20 @@ app.get("/watchlist/GET", async (req, res) => {
   res.json(data);
 });
 app.post("/watchlist/ADD", async (req, res) => {
-  const database = app.locals.database;
-  const watchlist = database.collection("watchlist");
-  const data = req.body;
-  await watchlist.insertOne(data).then((result) => {
-    res.json(result);
-  });
+  try {
+    const database = app.locals.database;
+    const watchlist = database.collection("watchlist");
+    const data = req.body;
+    console.log("Adding ticker to watchlist:", data);
+    await watchlist.insertOne(data).then((result) => {
+      res.json(result);
+    });
+  } catch (error) {
+    console.error("Failed to add ticker to watchlist:", error);
+    res.status(500).json({
+      error: "An error occurred while adding the ticker to the watchlist",
+    });
+  }
 });
 app.delete("/watchlist/DELETE/:ticker", async (req, res) => {
   try {

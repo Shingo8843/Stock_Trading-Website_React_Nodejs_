@@ -2,10 +2,27 @@ import { Card, Button, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
 import { faStar as faStarSolid } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
+
 import React, { useState } from "react";
-function Current({ quoteData, companyData, onBuy, onSell, portfolioData }) {
-  const [star, setStar] = useState(false);
+function Current({
+  quoteData,
+  companyData,
+  onBuy,
+  onSell,
+  portfolioData,
+  star,
+  setStar,
+  addWatchlist,
+  removeWatchlist,
+}) {
   const toggleStar = () => {
+    if (star) {
+      removeWatchlist(companyData.ticker);
+    } else {
+      addWatchlist(companyData.ticker, companyData.name);
+    }
     setStar(!star);
   };
   function numberToTime(t) {
@@ -21,7 +38,7 @@ function Current({ quoteData, companyData, onBuy, onSell, portfolioData }) {
   const CurrentTime = new Date();
   return (
     <Card className="m-2" bg="light">
-      <Card.Body>
+      <Card.Body className="text-center">
         <Row>
           <Col xs={5} md={4} lg={4} className="my-auto">
             <Card.Title>{companyData.ticker}</Card.Title>
@@ -38,7 +55,6 @@ function Current({ quoteData, companyData, onBuy, onSell, portfolioData }) {
             <Button variant="primary" size="sm" onClick={onBuy}>
               Buy
             </Button>{" "}
-            {/* if portfolio data include the ticker */}
             {portfolioData.find(
               (item) => item.ticker === companyData.ticker
             ) ? (
@@ -52,29 +68,63 @@ function Current({ quoteData, companyData, onBuy, onSell, portfolioData }) {
           <Col xs md lg className="my-auto text-center">
             <Card.Img src={companyData.logo} />
           </Col>
-
-          <Col xs={5} md={4} lg={4} className="my-auto text-success">
-            <Card.Text>{quoteData.c ? `$${quoteData.c}` : "$0.00"}</Card.Text>
-            <Card.Text>
-              {quoteData.c ? (
-                quoteData.c > quoteData.pc ? (
-                  <i className="fa fa-arrow-up text-success"></i>
+          {quoteData.d > 0 ? (
+            <Col xs={5} md={4} lg={4} className="my-auto ">
+              <Card.Title className="text-success">
+                {quoteData.c ? `$${quoteData.c}` : "$0.00"}
+              </Card.Title>
+              <Card.Text className="text-success">
+                {quoteData.d ? (
+                  quoteData.d > 0 ? (
+                    <FontAwesomeIcon
+                      icon={faArrowUp}
+                      className="text-success"
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faArrowDown}
+                      className="text-danger"
+                    />
+                  )
                 ) : (
-                  <i className="fa fa-arrow-down text-danger"></i>
-                )
-              ) : (
-                ""
-              )}
-              {quoteData.c ? `${quoteData.c} (${quoteData.dp})%` : ""}
-            </Card.Text>
-            <Card.Text>
-              <small>
-                {quoteData.c
-                  ? `${numberToTime(quoteData.t)}`
-                  : "No data available"}
-              </small>
-            </Card.Text>
-          </Col>
+                  ""
+                )}
+                {quoteData.d ? `${quoteData.d} (${quoteData.dp}%)` : ""}
+              </Card.Text>
+              <Card.Text>
+                <small>
+                  {quoteData.t
+                    ? `${numberToTime(quoteData.t)}`
+                    : "No data available"}
+                </small>
+              </Card.Text>
+            </Col>
+          ) : (
+            <Col xs={5} md={4} lg={4} className="my-auto">
+              <Card.Title className="text-danger">
+                {quoteData.c ? `$${quoteData.c}` : "$0.00"}
+              </Card.Title>
+              <Card.Text className="text-danger">
+                {quoteData.d ? (
+                  quoteData.d > 0 ? (
+                    <i className="fa fa-arrow-up text-success"></i>
+                  ) : (
+                    <i className="fa fa-arrow-down text-danger"></i>
+                  )
+                ) : (
+                  ""
+                )}
+                {quoteData.d ? `${quoteData.d} (${quoteData.dp}%)` : ""}
+              </Card.Text>
+              <Card.Text>
+                <small>
+                  {quoteData.t
+                    ? `${numberToTime(quoteData.t)}`
+                    : "No data available"}
+                </small>
+              </Card.Text>
+            </Col>
+          )}
         </Row>
         <Row>
           <Col className="text-muted text-center">

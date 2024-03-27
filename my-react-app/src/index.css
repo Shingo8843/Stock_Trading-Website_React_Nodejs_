@@ -67,3 +67,41 @@
   font-weight: bold;
   text-decoration: underline;
 }
+.news-card {
+  display: flex;
+  width: 100%;
+  max-width: 40rem; /* Adjust the max-width as needed */
+  margin: 1rem auto;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.2s;
+  background: #fff; /* Assuming a white background */
+}
+
+.news-card:hover {
+  transform: scale(1.03);
+}
+
+.news-body {
+  display: flex;
+  flex: 1; /* Takes the remaining space after the image */
+  flex-direction: row;
+  align-items: center;
+  text-align: left;
+  padding: 0.5rem;
+}
+
+.news-img {
+  flex-shrink: 0; /* Prevents the image from shrinking */
+  width: 150px; /* Fixed width */
+  height: 150px; /* Fixed height */
+  object-fit: cover; /* Ensures the image covers the area without stretching */
+}
+
+.news-title {
+  font-size: 1rem;
+  margin-left: 1rem; /* Adds spacing between the image and the title */
+  font-weight: bold;
+  color: #333;
+}

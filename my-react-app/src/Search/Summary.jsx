@@ -76,7 +76,7 @@ function Summary({ quoteData, companyData, peerData, hourlyPrices }) {
 
           <p className="summary-hloc">
             Company <param name="" value="" />
-            eers:
+            peers:
           </p>
           <div>
             {peerData.map((peer, index) => (
