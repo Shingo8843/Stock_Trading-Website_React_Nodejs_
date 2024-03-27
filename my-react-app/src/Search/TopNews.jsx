@@ -1,9 +1,9 @@
 import { React, useState } from "react";
 import News from "./News";
-import { Container } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import ShareModal from "./ShareModal";
 function TopNews({ newsData: newsList }) {
-  newsList = newsList.slice(0, 1);
+  newsList = newsList.slice(0, 20);
   const [show, setShow] = useState(false);
   const [selectedNews, setSelectedNews] = useState(newsList[0]);
   function onclick(newsItem) {
@@ -12,17 +12,21 @@ function TopNews({ newsData: newsList }) {
   }
   return (
     <Container className="top-news">
-      {newsList.map((newsItem, index) => (
-        <News
-          image={newsItem.image}
-          headline={newsItem.headline}
-          source={newsItem.source}
-          datetime={newsItem.datetime}
-          summary={newsItem.summary}
-          url={newsItem.url}
-          onClick={onclick}
-        />
-      ))}
+      <Row>
+        {newsList.map((newsItem, index) => (
+          <Col sm={12} md={6} lg={6}>
+            <News
+              image={newsItem.image}
+              headline={newsItem.headline}
+              source={newsItem.source}
+              datetime={newsItem.datetime}
+              summary={newsItem.summary}
+              url={newsItem.url}
+              onClick={onclick}
+            />
+          </Col>
+        ))}
+      </Row>
       <ShareModal
         show={show}
         onHide={() => setShow(false)}
