@@ -19,7 +19,8 @@ function ShareModal({
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
         <Modal.Title>
-          {source} - {date}
+          <h1 className="share-modal-title">{source}</h1>
+          <p className="share-modal-date">{date}</p>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -32,7 +33,7 @@ function ShareModal({
           </a>
           .
         </p>
-        <Container className="d-flex ">
+        <Container className="d-flex share-container">
           <a
             href={`https://www.facebook.com/sharer/sharer.php?u=${url}`}
             className="btn btn-primary"

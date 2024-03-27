@@ -70,22 +70,17 @@
 .news-card {
   display: flex;
   width: 100%;
-  max-width: 40rem; /* Adjust the max-width as needed */
-  margin: 1rem auto;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 40rem;
+  margin: 0.5rem auto;
   border-radius: 10px;
   overflow: hidden;
   transition: transform 0.2s;
-  background: #fff; /* Assuming a white background */
-}
-
-.news-card:hover {
-  transform: scale(1.03);
+  background: #fff;
 }
 
 .news-body {
   display: flex;
-  flex: 1; /* Takes the remaining space after the image */
+  flex: 1;
   flex-direction: row;
   align-items: center;
   text-align: left;
@@ -93,15 +88,176 @@
 }
 
 .news-img {
-  flex-shrink: 0; /* Prevents the image from shrinking */
-  width: 150px; /* Fixed width */
-  height: 150px; /* Fixed height */
-  object-fit: cover; /* Ensures the image covers the area without stretching */
+  flex-shrink: 0;
+  width: 75px;
+  height: 50px;
+  object-fit: cover;
 }
 
 .news-title {
-  font-size: 1rem;
-  margin-left: 1rem; /* Adds spacing between the image and the title */
+  margin-left: 1rem;
   font-weight: bold;
   color: #333;
+  font-size: small;
+}
+.modal-header {
+  background-color: #f8f9fa;
+  color: #000;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+  font-weight: bold;
+}
+
+.modal-body {
+  background-color: #fff;
+}
+
+.modal-body h5 {
+  color: #333;
+  font-weight: bold;
+}
+
+.modal-body p {
+  color: #666;
+}
+
+.modal-body a {
+  color: #007bff;
+}
+
+.modal-footer {
+  border-top: 1px solid #dee2e6;
+  justify-content: flex-start;
+  padding: 0.75rem 1rem;
+}
+
+.btn-primary {
+  background-color: #4267b2;
+  border-color: #4267b2;
+}
+
+.btn-info {
+  background-color: #1da1f2;
+  border-color: #1da1f2;
+}
+
+.btn {
+  margin-right: 0.5rem;
+}
+
+.fa-facebook,
+.fa-twitter {
+  font-size: 1.25rem;
+}
+.share-container {
+  display: flex;
+
+  align-items: center;
+  margin-top: 1rem;
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+}
+.share-modal-title {
+  font-weight: bold;
+}
+.share-modal-date {
+  color: #666;
+  font-weight: normal;
+}
+.stock-search {
+  width: 100%;
+  max-width: 600px;
+  margin: 1rem auto;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.form-control {
+  position: relative;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem 0 0 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  z-index: 2;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.input-group-append .btn {
+  padding: 0.5rem 1rem;
+  margin-left: -1px;
+  line-height: 1.5;
+  background-color: white;
+  border: 1px solid #007bff;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.input-group-append .btn:not(:last-child) {
+  border-radius: 0;
+}
+
+.input-group-append .btn:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.font-awesome-icon {
+  display: inline-block;
+  width: 1.5em;
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+.list-group {
+  width: 100%;
+  position: absolute;
+  z-index: 3;
+}
+
+.list-group-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.suggestion {
+  cursor: pointer;
+  width: 100%;
+  display: block;
+}
+
+.suggestion:hover {
+  background-color: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+  .stock-search {
+    margin: 1rem;
+  }
+
+  .form-control,
+  .input-group-append .btn {
+    padding: 0.5rem;
+  }
 }

@@ -13,7 +13,7 @@ function News({ image, headline, source, datetime, summary, url, onClick }) {
     >
       <Card.Body className="news-body">
         <Card.Img className="news-img" src={image || defaultImage} />
-        <Card.Title className="news-title">{headline}</Card.Title>
+        <Card.Text className="news-title">{headline}</Card.Text>
       </Card.Body>
     </Card>
   );

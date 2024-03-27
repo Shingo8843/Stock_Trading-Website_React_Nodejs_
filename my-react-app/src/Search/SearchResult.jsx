@@ -5,7 +5,6 @@ import TopNews from "./TopNews";
 import Charts from "./Chart";
 import Insights from "./Insights";
 import Current from "./Current";
-import ShareModal from "./ShareModal";
 
 function SearchResult({
   quoteData,

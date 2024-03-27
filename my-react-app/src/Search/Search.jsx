@@ -385,6 +385,9 @@ function Search() {
     }
   }
   async function handleSearch() {
+    if (!searchValue.trim()) {
+      return;
+    }
     setLoading(true);
     try {
       await fetchQuoteData(searchValue).then((data) => {
