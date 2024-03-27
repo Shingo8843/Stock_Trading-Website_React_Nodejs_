@@ -15,3 +15,55 @@
 .close-button {
   align-items: flex-start;
 }
+.suggestions {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.custom-tabs .nav-tabs {
+  border-bottom: 2px solid #dee2e6;
+}
+
+.custom-tabs .nav-item {
+  margin-bottom: -2px;
+}
+
+.custom-tabs .nav-link {
+  border: none;
+  color: #6c757d;
+}
+
+.custom-tabs .nav-link:hover {
+  border: none;
+}
+
+.custom-tabs .nav-link.active {
+  color: #495057;
+  border-bottom: 3px solid #007bff;
+}
+.custom-tabs .nav {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.custom-tabs .nav-item {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.custom-tabs .nav-link {
+  border: none;
+  flex-grow: 1;
+  margin-bottom: -1px;
+}
+
+.custom-tabs .nav-link.active {
+  border-bottom: 3px solid #007bff !important;
+}
+.summary-hloc {
+  font-weight: bold;
+}
+.about-company {
+  font-weight: bold;
+  text-decoration: underline;
+}

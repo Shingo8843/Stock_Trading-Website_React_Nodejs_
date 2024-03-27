@@ -40,23 +40,48 @@ function Summary({ quoteData, companyData, peerData, hourlyPrices }) {
   return (
     <Container fluid>
       <Row>
-        <Col md={6} variance="dark">
-          <h5>High Price: {quoteData.h}</h5>
-          <h5>Low Price: {quoteData.l}</h5>
-          <h5>Open Price: {quoteData.o}</h5>
-          <h5>Prev. Close: {quoteData.pc}</h5>
-          <h5>About the company</h5>
-          <p>IPO Start Date: {companyData.ipo}</p>
-          <p>Industry: {companyData.finnhubIndustry}</p>
+        <Col md={6} variance="dark" className="text-center">
           <p>
-            Webpage: <a href={companyData.weburl}>{companyData.weburl}</a>
+            <span className="summary-hloc">High Price:</span> {quoteData.h}
+          </p>
+          <p>
+            <span className="summary-hloc">Low Price:</span> {quoteData.l}
+          </p>
+          <p>
+            <span className="summary-hloc">Open Price:</span> {quoteData.o}
+          </p>
+          <p>
+            <span className="summary-hloc">Current Price:</span> {quoteData.c}
+          </p>
+          <h5 className="about-company">About the company</h5>
+          <p>
+            <span className="summary-hloc">IPO Start Date:</span>{" "}
+            {companyData.ipo}
+          </p>
+          <p>
+            <span className="summary-hloc"> Industry:</span>{" "}
+            {companyData.finnhubIndustry}
           </p>
 
-          <p>Company peers:</p>
+          <p>
+            <span className="summary-hloc">Webpage:</span>{" "}
+            {companyData.weburl ? (
+              <a href={companyData.weburl} target="_blank" rel="noreferrer">
+                {companyData.weburl}
+              </a>
+            ) : (
+              "N/A"
+            )}{" "}
+          </p>
+
+          <p className="summary-hloc">
+            Company <param name="" value="" />
+            eers:
+          </p>
           <div>
             {peerData.map((peer, index) => (
               <span key={index} className="peer-link">
-                {peer}{" "}
+                <a href="">{peer}</a>{" "}
               </span>
             ))}
           </div>

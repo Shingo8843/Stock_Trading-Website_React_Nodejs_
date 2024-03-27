@@ -25,6 +25,16 @@ function Search() {
   const [insiderSentimentsData, setInsiderSentimentsData] = useState({});
   const [historicalEPSSurprises, setHistoricalEPSSurprises] = useState({});
   const initialWallet = 100000;
+  async function fetchsuggestions(searchValue) {
+    try {
+      const response = await fetch(url + `search/${searchValue}`);
+      const data = await response.json();
+      // console.log("Suggestions:", data);
+      return data.result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
   async function fetchInsiderSentiments(ticker) {
     try {
       const response = await fetch(url + `insider/${ticker}`);
@@ -81,13 +91,18 @@ function Search() {
       console.error(error);
     }
   }
-  async function fetchHourlyPrices(ticker) {
+  async function fetchHourlyPrices(ticker, timestamp) {
     try {
       const currentTime = new Date();
       let toDate = currentTime.getTime();
 
-      if (Math.abs(currentTime - toDate) > 300000) {
-        toDate = quoteData.t * 1000;
+      if (timestamp) {
+        if (Math.abs(currentTime - toDate) > 300000) {
+          toDate = timestamp * 1000;
+        }
+      } else {
+        console.log("quoteData.t is undefined");
+        return;
       }
 
       const queryParams = new URLSearchParams({
@@ -272,10 +287,9 @@ function Search() {
   async function handleSearch() {
     setLoading(true);
     try {
-      await fetchQuoteData(searchValue).then(() => {
-        fetchHourlyPrices(searchValue);
+      await fetchQuoteData(searchValue).then((data) => {
+        fetchHourlyPrices(searchValue, data.t);
       });
-
       const dataFetchPromises = [
         fetchCompanyData(searchValue),
         fetchRecommendationTrend(searchValue),
@@ -313,6 +327,7 @@ function Search() {
       const data = await response.json();
       setQuoteData(data);
       console.log("Quote data:", data);
+      return data;
     } catch (error) {
       console.error(error);
     }
@@ -364,6 +379,7 @@ function Search() {
             setSearchValue={setSearchValue}
             handleSearch={handleSearch}
             handleClear={handleClear}
+            fetchsuggestions={fetchsuggestions}
           />
           {loading ? (
             <p>Loading...</p>

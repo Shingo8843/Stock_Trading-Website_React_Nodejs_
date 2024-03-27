@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Tab, Tabs, Container } from "react-bootstrap";
 import Summary from "./Summary";
 import TopNews from "./TopNews";
@@ -22,6 +22,7 @@ function SearchResult({
   onBuy,
 }) {
   const [key, setKey] = useState("summary");
+
   return (
     <Container>
       <Current
@@ -35,7 +36,7 @@ function SearchResult({
         id="controlled-tab-example"
         activeKey={key}
         onSelect={(k) => setKey(k)}
-        className="mb-3"
+        className="mb-3 custom-tabs" // Apply custom class for styling
       >
         <Tab eventKey="summary" title="Summary">
           <Summary

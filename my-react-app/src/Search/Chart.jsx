@@ -17,7 +17,7 @@ IndicatorsAll(Highcharts);
 VBP(Highcharts);
 
 function Chart({ historicalPrices }) {
-  console.log("Historical Data", historicalPrices);
+  // console.log("Historical Data", historicalPrices);
   if (!historicalPrices) {
     return <div>Loading...</div>;
   }
