@@ -2,7 +2,9 @@ import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
+import { useNavigate } from "react-router-dom";
 function Summary({ quoteData, companyData, peerData, hourlyPrices }) {
+  const navigate = useNavigate();
   let options = {};
   if (!hourlyPrices) {
     return <div>Loading...</div>;
@@ -36,7 +38,9 @@ function Summary({ quoteData, companyData, peerData, hourlyPrices }) {
       },
     ],
   };
-
+  function handleClick(ticker) {
+    navigate(`/search/${ticker}`);
+  }
   return (
     <Container fluid>
       <Row>
@@ -81,7 +85,9 @@ function Summary({ quoteData, companyData, peerData, hourlyPrices }) {
           <div>
             {peerData.map((peer, index) => (
               <span key={index} className="peer-link">
-                <a href="">{peer}</a>{" "}
+                <a href="" onClick={() => handleClick(peer)}>
+                  {peer}
+                </a>{" "}
               </span>
             ))}
           </div>

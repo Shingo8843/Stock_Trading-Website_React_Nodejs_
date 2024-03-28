@@ -46,26 +46,26 @@ function SearchResult({
         className="mb-3 custom-tabs" // Apply custom class for styling
       >
         <Tab eventKey="summary" title="Summary">
-          {/* <Summary
+          <Summary
             quoteData={quoteData}
             companyData={companyData}
             peerData={peerData}
             hourlyPrices={hourlyPrices}
-          /> */}
+          />
         </Tab>
         <Tab eventKey="news" title="Top News">
-          {/* <TopNews newsData={newsData} /> */}
+          <TopNews newsData={newsData} />
         </Tab>
         <Tab eventKey="charts" title="Charts">
-          {/* <Charts historicalPrices={historicalPrices} /> */}
+          <Charts historicalPrices={historicalPrices} />
         </Tab>
         <Tab eventKey="insights" title="Insights">
-          {/* <Insights
+          <Insights
             companyData={companyData}
             insiderSentimentsData={insiderSentimentsData}
             recommendationTrend={recommendationTrend}
             historicalEPSSurprises={historicalEPSSurprises}
-          /> */}
+          />
         </Tab>
       </Tabs>
     </Container>

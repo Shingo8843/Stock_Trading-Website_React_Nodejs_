@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, Button, Row, Col } from "react-bootstrap";
-
+import { useNavigate } from "react-router-dom";
 const PortfolioItem = ({
   ticker,
   name,
@@ -13,12 +13,15 @@ const PortfolioItem = ({
   if (!currentPrice) {
     currentPrice = 0;
   }
+  const navigate = useNavigate();
   const marketValue = currentPrice * quantity;
   const change = currentPrice - avgCost;
   const changeColor = change >= 0 ? "text-success" : "text-danger";
-
+  function handleClick(ticker) {
+    navigate(`/search/${ticker}`);
+  }
   return (
-    <Card className="mb-3">
+    <Card className="mb-3" onClick={() => handleClick(ticker)}>
       <Card.Header as="h5" className="text-start">
         {ticker} {name}
       </Card.Header>
