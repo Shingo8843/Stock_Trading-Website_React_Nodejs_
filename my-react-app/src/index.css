@@ -9,7 +9,7 @@
   font-size: calc(10px + 2vmin);
 }
 .main-content {
-  padding-top: 60px;
+  padding-top: 100px !important;
   padding-bottom: 60px;
 }
 .close-button {

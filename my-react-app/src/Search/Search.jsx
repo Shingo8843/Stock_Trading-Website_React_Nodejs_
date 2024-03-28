@@ -5,29 +5,40 @@ import Header from "../Header";
 import { Container } from "react-bootstrap";
 import BuyStockModal from "../Portfolio/BuyStockModal";
 import SellStockModal from "../Portfolio/SellStockModal";
-import Watchlist from "../Watchlist/Watchlist";
+import { useNavigate } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import { useSearch } from "../SearchContext";
+
 function Search() {
   const url = "http://localhost:8080/";
-  const [searchValue, setSearchValue] = useState("");
+
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [companyData, setCompanyData] = useState({});
-  const [quoteData, setQuoteData] = useState({});
-  const [portfolioData, setportfolioData] = useState([]);
+
+  const { companyData, setCompanyData } = useSearch();
+  const { quoteData, setQuoteData } = useSearch();
+  const { portfolioData, setportfolioData } = useSearch();
+  const { recommendationTrend, setRecommendationTrend } = useSearch();
+  const { newsData, setNewsData } = useSearch();
+  const { selectedStock, setSelectedStock } = useSearch();
+  const { hourlyPrices, setHourlyPrices } = useSearch();
+  const { peerData, setPeerData } = useSearch();
+  const { historicalPrices, setHistoricalPrices } = useSearch();
+  const { insiderSentimentsData, setInsiderSentimentsData } = useSearch();
+  const { historicalEPSSurprises, setHistoricalEPSSurprises } = useSearch();
+
   const [showBuyModal, setShowBuyModal] = useState(false);
   const [showSellModal, setShowSellModal] = useState(false);
-  const [recommendationTrend, setRecommendationTrend] = useState({});
-  const [newsData, setNewsData] = useState([{}]);
+
   const [wallet, setWallet] = useState(100000);
-  const [selectedStock, setSelectedStock] = useState(null);
-  const [hourlyPrices, setHourlyPrices] = useState([]);
-  const [peerData, setPeerData] = useState([]);
-  const [historicalPrices, setHistoricalPrices] = useState([]);
-  const [insiderSentimentsData, setInsiderSentimentsData] = useState({});
-  const [historicalEPSSurprises, setHistoricalEPSSurprises] = useState({});
+
   const [star, setStar] = useState(false);
   const [Watchlist, setWatchlist] = useState([]);
+  const location = useLocation();
   const initialWallet = 100000;
+  const { ticker } = useParams();
+  const { searchValue, setSearchValue } = useSearch();
+  const navigate = useNavigate();
   useEffect(() => {
     if (Watchlist.find((item) => item.ticker === searchValue)) {
       setStar(true);
@@ -88,9 +99,9 @@ function Search() {
       console.error("Failed to remove stock from watchlist:", error);
     }
   }
-  async function fetchsuggestions(searchValue) {
+  async function fetchsuggestions(suggestVal) {
     try {
-      const response = await fetch(url + `search/${searchValue}`);
+      const response = await fetch(url + `search/${suggestVal}`);
       const data = await response.json();
       // console.log("Suggestions:", data);
       return data.result;
@@ -384,36 +395,49 @@ function Search() {
       console.error("Failed to update portfolio:", error);
     }
   }
-  async function handleSearch() {
-    if (!searchValue.trim()) {
-      return;
-    }
-    setLoading(true);
-    try {
-      await fetchQuoteData(searchValue).then((data) => {
-        fetchHourlyPrices(searchValue, data.t);
-      });
-      const dataFetchPromises = [
-        fetchCompanyData(searchValue),
-        fetchRecommendationTrend(searchValue),
-        fetchPeerData(searchValue),
-        fetchNewsData(searchValue),
-        fetchHistoricalPrices(searchValue),
-        fetchInsiderSentiments(searchValue),
-        fetchHistoricalEPSSurprises(searchValue),
-      ];
-      await Promise.all(dataFetchPromises);
-      setSelectedStock(
-        portfolioData.find((item) => item.ticker === searchValue)
-      );
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setShowResults(true);
-      setLoading(false);
-    }
-  }
 
+  useEffect(() => {
+    console.log("Location:", location);
+    async function fetchData() {
+      const search = ticker || location.state?.search;
+      console.log("Search:", search, searchValue);
+      if (search && search !== searchValue) {
+        setLoading(true);
+        setSearchValue(search);
+        try {
+          await fetchQuoteData(search).then((data) => {
+            fetchHourlyPrices(search, data.t);
+          });
+          await Promise.all([
+            fetchCompanyData(search),
+            fetchRecommendationTrend(search),
+            fetchPeerData(search),
+            fetchNewsData(search),
+            fetchHistoricalPrices(search),
+            fetchInsiderSentiments(search),
+            fetchHistoricalEPSSurprises(search),
+          ]);
+
+          setShowResults(true);
+        } catch (error) {
+          console.error(error);
+          setShowResults(false);
+        } finally {
+          setLoading(false);
+        }
+      } else if (searchValue == ticker) {
+        setShowResults(true);
+      } else {
+        setShowResults(false);
+      }
+    }
+
+    fetchData();
+  }, [ticker]);
+  useEffect(() => {
+    console.log("Search Value:", searchValue);
+    console.log("location:", location);
+  });
   useEffect(() => {
     fetchPortfolio();
     fetchWatchlist();
@@ -474,14 +498,11 @@ function Search() {
   }
   return (
     <Container>
-      <Header />
+      <Header searchValue={searchValue} />
       <Container className="main-content">
         <div className="search my-3">
           <h1 className="searchtitle">Stock Search</h1>
           <SearchBar
-            searchValue={searchValue}
-            setSearchValue={setSearchValue}
-            handleSearch={handleSearch}
             handleClear={handleClear}
             fetchsuggestions={fetchsuggestions}
           />

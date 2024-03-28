@@ -4,6 +4,8 @@ import PortfolioItem from "./PortfolioItem";
 import Header from "../Header";
 import BuyStockModal from "./BuyStockModal";
 import SellStockModal from "./SellStockModal";
+import { useLocation } from "react-router-dom";
+
 function Portfolio() {
   const initialWallet = 100000;
   const [portfoliodata, setPortfolioData] = useState([]);
@@ -12,6 +14,8 @@ function Portfolio() {
   const [showBuyModal, setShowBuyModal] = useState(false);
   const [showSellModal, setShowSellModal] = useState(false);
   const [selectedStock, setSelectedStock] = useState(null);
+  const location = useLocation();
+  console.log("location", location);
   useEffect(() => {
     const fetchAndUpdatePortfolio = async () => {
       try {
@@ -210,6 +214,7 @@ function Portfolio() {
     }, 0);
     setWallet(initialWallet - totalInvestment);
   }
+
   if (isLoading) {
     return (
       <Container>

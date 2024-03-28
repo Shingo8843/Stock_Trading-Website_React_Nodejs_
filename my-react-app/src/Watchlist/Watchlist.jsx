@@ -2,11 +2,13 @@ import { React, useState, useEffect } from "react";
 import WatchlistItem from "./WatchListItem";
 import { Alert, Container, Spinner } from "react-bootstrap";
 import Header from "../Header";
+import { useSearch } from "../SearchContext";
 // const
 function Watchlist() {
+  const { searchValue } = useSearch();
+  console.log("Watchlist rendered", searchValue);
   const [watchlist, setWatchlist] = useState([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     fetchWatchlist()
       .then(async (data) => {
@@ -51,7 +53,7 @@ function Watchlist() {
     return (
       <Container>
         <Header />
-        <Container>
+        <Container className="main-content">
           <Spinner animation="border" />
         </Container>
       </Container>
@@ -60,7 +62,7 @@ function Watchlist() {
     return (
       <Container>
         <Header />
-        <Container>
+        <Container className="main-content">
           <h2>My Watchlist</h2>
           <Alert variant="info">Your watchlist is empty.</Alert>
         </Container>
@@ -71,6 +73,7 @@ function Watchlist() {
   return (
     <Container>
       <Header />
+
       <Container className="main-content">
         <div className=" my-3">
           <h2>My Watchlist</h2>
