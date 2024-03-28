@@ -17,6 +17,9 @@ function Current({
   addWatchlist,
   removeWatchlist,
 }) {
+  if (!quoteData || !companyData) {
+    return <div>Loading...</div>;
+  }
   const toggleStar = () => {
     if (star) {
       removeWatchlist(companyData.ticker);

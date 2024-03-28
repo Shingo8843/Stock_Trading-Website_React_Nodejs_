@@ -471,6 +471,7 @@ function Search() {
     }
   }
   function handleClear() {
+    navigate("/search");
     setSearchValue("");
     setShowResults(false);
   }
@@ -501,7 +502,10 @@ function Search() {
       <Header searchValue={searchValue} />
       <Container className="main-content">
         <div className="search my-3">
-          <h1 className="searchtitle">Stock Search</h1>
+          <Container className="searchtitle-container">
+            <h1 className="searchtitle">Stock Search</h1>
+          </Container>
+
           <SearchBar
             handleClear={handleClear}
             fetchsuggestions={fetchsuggestions}

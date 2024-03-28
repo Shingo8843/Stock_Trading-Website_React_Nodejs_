@@ -85,10 +85,24 @@ const PortfolioItem = ({
         </Row>
       </Card.Body>
       <Card.Footer className="text-start">
-        <Button variant="primary" onClick={() => onBuy(ticker)} size="sm">
+        <Button
+          variant="primary"
+          onClick={(event) => {
+            event.stopPropagation();
+            onBuy(ticker);
+          }}
+          size="sm"
+        >
           Buy
         </Button>{" "}
-        <Button variant="danger" onClick={() => onSell(ticker)} size="sm">
+        <Button
+          variant="danger"
+          onClick={(event) => {
+            event.stopPropagation();
+            onSell(ticker);
+          }}
+          size="sm"
+        >
           Sell
         </Button>
       </Card.Footer>

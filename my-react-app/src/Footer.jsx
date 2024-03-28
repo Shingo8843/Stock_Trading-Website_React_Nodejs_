@@ -3,7 +3,7 @@ import { Container } from "react-bootstrap";
 function Footer() {
   return (
     <footer className="text-dark footer mt-auto py-3 bg-light fixed-bottom">
-      <Container className="text-center">
+      <Container className="text-center footer-text">
         Powered by{" "}
         <a href="https://finnhub.io" className="text-blue">
           Finnhub

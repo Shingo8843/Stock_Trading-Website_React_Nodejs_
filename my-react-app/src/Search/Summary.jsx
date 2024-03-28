@@ -41,6 +41,20 @@ function Summary({ quoteData, companyData, peerData, hourlyPrices }) {
   function handleClick(ticker) {
     navigate(`/search/${ticker}`);
   }
+  if (
+    !quoteData ||
+    !companyData ||
+    !peerData ||
+    !hourlyPrices ||
+    !hourlyPrices.results ||
+    hourlyPrices.results.length === 0
+  ) {
+    return (
+      <Container fluid>
+        <p>Data is not available.</p>
+      </Container>
+    );
+  }
   return (
     <Container fluid>
       <Row>

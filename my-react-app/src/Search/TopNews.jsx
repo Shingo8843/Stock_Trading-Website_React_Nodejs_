@@ -10,6 +10,9 @@ function TopNews({ newsData: newsList }) {
     setSelectedNews(newsItem);
     setShow(true);
   }
+  if (!newsList || newsList.length === 0) {
+    return <div>Loading...</div>;
+  }
   return (
     <Container className="top-news">
       <Row>

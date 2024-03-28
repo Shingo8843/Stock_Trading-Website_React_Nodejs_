@@ -10,7 +10,7 @@ function Header() {
       bg="primary"
       variant="dark"
       expand="lg"
-      className="tertiary"
+      className="header "
       fixed="top"
     >
       <Navbar.Brand>Stock Search</Navbar.Brand>
@@ -18,28 +18,31 @@ function Header() {
       <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
         <Nav className="ml-auto">
           <LinkContainer
+            className="header-link-container"
             to={{
               pathname: searchValue ? `/search/${searchValue}` : "/search",
               state: { search: searchValue },
             }}
           >
-            <Nav.Link>Search</Nav.Link>
+            <Nav.Link className="header-link">Search</Nav.Link>
           </LinkContainer>
           <LinkContainer
+            className="header-link-container"
             to={{
               pathname: "/watchlist",
               state: { search: searchValue },
             }}
           >
-            <Nav.Link>Watchlist</Nav.Link>
+            <Nav.Link className="header-link">Watchlist</Nav.Link>
           </LinkContainer>
           <LinkContainer
+            className="header-link-container"
             to={{
               pathname: "/portfolio",
               state: { search: searchValue },
             }}
           >
-            <Nav.Link>Portfolio</Nav.Link>
+            <Nav.Link className="header-link">Portfolio</Nav.Link>
           </LinkContainer>
         </Nav>
       </Navbar.Collapse>

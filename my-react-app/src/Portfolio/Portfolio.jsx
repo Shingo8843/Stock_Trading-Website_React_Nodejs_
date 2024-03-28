@@ -7,7 +7,7 @@ import SellStockModal from "./SellStockModal";
 import { useLocation } from "react-router-dom";
 
 function Portfolio() {
-  const initialWallet = 100000;
+  const initialWallet = 25000;
   const [portfoliodata, setPortfolioData] = useState([]);
   const [wallet, setWallet] = useState(initialWallet);
   const [isLoading, setIsLoading] = useState(true);

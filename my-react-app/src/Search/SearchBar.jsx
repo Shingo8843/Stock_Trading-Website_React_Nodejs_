@@ -12,11 +12,13 @@ function SearchBar({
   const [suggest, setSuggest] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (searchValue) {
       setLoading(true);
+      setShowSuggestions(true);
       fetchsuggestions(searchValue).then((data) => {
         setSuggest(data);
         setLoading(false);
@@ -30,46 +32,59 @@ function SearchBar({
     if (!searchValue.trim()) {
       return;
     }
+    console.log("searchValue", searchValue);
     navigate(`/search/${searchValue}`, { state: { search: searchValue } });
     setSuggest([]);
   }
 
   return (
     <div className="stock-search my-3">
-      <InputGroup>
+      <InputGroup className="search-input-group">
         <FormControl
-          placeholder="Search for a stock..."
+          placeholder="Enter stock ticker symbol"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
+          className="search-input"
         />
-        <Button onClick={onSearchClick}>
+
+        <Button
+          variant="outline-secondary"
+          onClick={onSearchClick}
+          className="search-btn"
+        >
           <FontAwesomeIcon icon={faSearch} />
         </Button>
-        <Button onClick={handleClear}>
+        <Button
+          variant="outline-secondary"
+          onClick={handleClear}
+          className="clear-btn"
+        >
           <FontAwesomeIcon icon={faTimes} />
         </Button>
       </InputGroup>
-      {loading || !suggest.length ? (
-        <p>Loading...</p>
-      ) : (
-        <ListGroup className="suggestions">
-          {suggest.map((s, index) => (
-            <ListGroup.Item key={index}>
-              <div
-                className="suggestion"
-                onClick={() => {
-                  setSearchValue(s.symbol);
-                  navigate("/search", { state: { search: s.symbol } }); // Navigate with state when suggestion is clicked
-                }}
-              >
-                <span>
-                  {s.symbol} | {s.description}
-                </span>
-              </div>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-      )}
+      {showSuggestions ? (
+        loading || !suggest.length ? (
+          <p>Loading...</p>
+        ) : (
+          <ListGroup className="suggestions-list">
+            {suggest.map((s, index) => (
+              <ListGroup.Item key={index} className="suggestion-item">
+                <div
+                  className="suggestion"
+                  onClick={() => {
+                    setSearchValue(s.symbol);
+                    navigate("/search", { state: { search: s.symbol } });
+                  }}
+                >
+                  <span>
+                    {s.symbol} | {s.description}
+                  </span>
+                </div>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        )
+      ) : null}
     </div>
   );
 }

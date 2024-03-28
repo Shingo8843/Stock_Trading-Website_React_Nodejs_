@@ -9,6 +9,14 @@ function Insights({
   recommendationTrend,
   historicalEPSSurprises,
 }) {
+  if (
+    !companyData ||
+    !insiderSentimentsData ||
+    !recommendationTrend ||
+    !historicalEPSSurprises
+  ) {
+    return <div>Loading...</div>;
+  }
   let total = 0;
   let positive = 0;
   let negative = 0;
