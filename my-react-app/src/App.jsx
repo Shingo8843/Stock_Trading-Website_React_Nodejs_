@@ -5,6 +5,7 @@ import Footer from "./Footer";
 import Search from "./Search/Search";
 import Watchlist from "./Watchlist/Watchlist";
 import Portfolio from "./Portfolio/Portfolio";
+import "./index.css";
 function MainContent() {
   const router = createBrowserRouter([
     { path: "/search", element: <Search /> },
