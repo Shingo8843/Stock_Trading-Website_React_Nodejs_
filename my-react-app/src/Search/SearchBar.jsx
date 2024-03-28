@@ -4,11 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
-function SearchBar({
-  handleSearch, // This now navigates to `/search` with state
-  handleClear,
-  fetchsuggestions,
-}) {
+function SearchBar({ handleClear, fetchsuggestions }) {
   const [suggest, setSuggest] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -73,7 +69,7 @@ function SearchBar({
                   className="suggestion"
                   onClick={() => {
                     setSearchValue(s.symbol);
-                    navigate("/search", { state: { search: s.symbol } });
+                    onSearchClick();
                   }}
                 >
                   <span>

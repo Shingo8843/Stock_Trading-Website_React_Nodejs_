@@ -2,7 +2,7 @@ import { React, useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 import SearchResult from "./SearchResult";
 import Header from "../Header";
-import { Container } from "react-bootstrap";
+import { Alert, Container } from "react-bootstrap";
 import BuyStockModal from "../Portfolio/BuyStockModal";
 import SellStockModal from "../Portfolio/SellStockModal";
 import { useNavigate } from "react-router-dom";
@@ -35,7 +35,7 @@ function Search() {
   const [star, setStar] = useState(false);
   const [Watchlist, setWatchlist] = useState([]);
   const location = useLocation();
-  const initialWallet = 100000;
+  const initialWallet = 25000;
   const { ticker } = useParams();
   const { searchValue, setSearchValue } = useSearch();
   const navigate = useNavigate();
@@ -214,7 +214,7 @@ function Search() {
       const response = await fetch(url + `peers/${ticker}`);
       const data = await response.json();
       setPeerData(data);
-      // console.log(data);
+      console.log("Peer Data:", data);
     } catch (error) {
       console.error(error);
     }
@@ -284,7 +284,7 @@ function Search() {
         throw new Error("Failed to delete portfolio in the database.");
       }
       const result = await response.json();
-      // console.log("Delete result:", result);
+      console.log("Delete result:", result);
     } catch (error) {
       console.error("Failed to delete portfolio:", error);
     }
@@ -363,7 +363,7 @@ function Search() {
         throw new Error("Failed to add portfolio to the database.");
       }
       const result = await response.json();
-      // console.log("Add result:", result);
+      console.log("Add result:", result);
     } catch (error) {
       console.error("Failed to add portfolio:", error);
     }
@@ -374,7 +374,6 @@ function Search() {
   }, [searchValue, portfolioData]);
 
   async function updatePortfolioInDatabase(ticker, data) {
-    // console.log("Update data:", data);
     try {
       const response = await fetch(
         `http://localhost:8080/portfolio/UPDATE/${ticker}`,
@@ -390,7 +389,7 @@ function Search() {
         throw new Error("Failed to update portfolio in the database.");
       }
       const result = await response.json();
-      // console.log("Update result:", result);
+      console.log("Update result:", result);
     } catch (error) {
       console.error("Failed to update portfolio:", error);
     }
@@ -465,7 +464,7 @@ function Search() {
       const response = await fetch(url + `company/${ticker}`);
       const data = await response.json();
       setCompanyData(data);
-      // console.log(data);
+      console.log("Company data:", data);
     } catch (error) {
       console.error(error);
     }
@@ -505,7 +504,6 @@ function Search() {
           <Container className="searchtitle-container">
             <h1 className="searchtitle">Stock Search</h1>
           </Container>
-
           <SearchBar
             handleClear={handleClear}
             fetchsuggestions={fetchsuggestions}
@@ -513,7 +511,17 @@ function Search() {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            showResults && (
+            showResults &&
+            (quoteData &&
+            companyData &&
+            portfolioData &&
+            recommendationTrend &&
+            hourlyPrices.results &&
+            peerData &&
+            newsData &&
+            historicalPrices &&
+            insiderSentimentsData &&
+            historicalEPSSurprises.length !== 0 ? (
               <SearchResult
                 quoteData={quoteData}
                 companyData={companyData}
@@ -532,7 +540,13 @@ function Search() {
                 onBuy={() => setShowBuyModal(true)}
                 onSell={() => setShowSellModal(true)}
               />
-            )
+            ) : (
+              <Container>
+                <Alert variant="danger" className="text-center">
+                  No data found. Please enter a valid Ticker
+                </Alert>
+              </Container>
+            ))
           )}
           {selectedStock && quoteData.c && (
             <SellStockModal

@@ -231,12 +231,12 @@ function Portfolio() {
     return (
       <Container>
         <Header />
-        <Container className="main-content">
-          <h2 className="text-start">My Portfolio</h2>
-          <p className="text-start">Money in Wallet: {wallet}</p>
-          <Alert variant="warning">
-            Currently you have no stocks in your portfolio.
-          </Alert>
+        <Container className="main-content text-center">
+          <h1 className="text-start font-weight-bold">My Portfolio</h1>
+          <h5 className="text-start font-weight-bold">
+            Money in Wallet: ${wallet.toFixed(2)}
+          </h5>
+          <Alert variant="warning">Currently you don't have any stock.</Alert>
         </Container>
       </Container>
     );
