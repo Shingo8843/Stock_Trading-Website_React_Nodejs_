@@ -49,7 +49,7 @@ function Portfolio() {
     fetchAndUpdatePortfolio();
   }, []);
   async function fetchPortfolio() {
-    const response = await fetch("http://localhost:8080/portfolio/GET", {
+    const response = await fetch("http://localhost:8080/api/portfolio/GET", {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -71,7 +71,7 @@ function Portfolio() {
     }
   }
   async function fetchStockPrice(ticker) {
-    const response = await fetch(`http://localhost:8080/quote/${ticker}`, {
+    const response = await fetch(`http://localhost:8080/api/quote/${ticker}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -125,7 +125,7 @@ function Portfolio() {
   async function deletePortfolioInDatabase(ticker) {
     try {
       const response = await fetch(
-        `http://localhost:8080/portfolio/DELETE/${ticker}`,
+        `http://localhost:8080/api/portfolio/DELETE/${ticker}`,
         {
           method: "DELETE",
           headers: {
@@ -190,7 +190,7 @@ function Portfolio() {
     console.log("Update data:", data);
     try {
       const response = await fetch(
-        `http://localhost:8080/portfolio/UPDATE/${ticker}`,
+        `http://localhost:8080/api/portfolio/UPDATE/${ticker}`,
         {
           method: "PUT",
           headers: {

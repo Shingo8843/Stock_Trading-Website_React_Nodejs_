@@ -94,7 +94,7 @@ function Watchlist() {
   );
 }
 async function fetchWatchlist() {
-  const response = await fetch("http://localhost:8080/watchlist/GET", {
+  const response = await fetch("http://localhost:8080/api/watchlist/GET", {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -118,7 +118,7 @@ async function fetchWatchlist() {
 async function removeFromWatchlist(ticker) {
   try {
     const response = await fetch(
-      `http://localhost:8080/watchlist/DELETE/${ticker}`,
+      `http://localhost:8080/api/watchlist/DELETE/${ticker}`,
       {
         method: "DELETE",
         headers: {
@@ -144,7 +144,7 @@ async function removeFromWatchlist(ticker) {
 }
 
 async function getQuote(ticker) {
-  const response = await fetch(`http://localhost:8080/quote/${ticker}`, {
+  const response = await fetch(`http://localhost:8080/api/quote/${ticker}`, {
     method: "GET",
     headers: {
       Accept: "application/json",

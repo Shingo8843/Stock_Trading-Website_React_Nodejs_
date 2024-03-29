@@ -1,0 +1,22 @@
+{
+  "name": "express-react-app",
+  "version": "1.0.0",
+  "description": "api: node index.js\r my-react-app: npm run dev",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"cd api && npm start\" \"cd my-react-app && npm start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shingo8843/express-react-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shingo8843/express-react-app/issues"
+  },
+  "homepage": "https://github.com/Shingo8843/express-react-app#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

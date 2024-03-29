@@ -8,9 +8,10 @@ import SellStockModal from "../Portfolio/SellStockModal";
 import { useNavigate } from "react-router-dom";
 import { useLocation, useParams } from "react-router-dom";
 import { useSearch } from "../SearchContext";
+import Current from "./Current";
 
 function Search() {
-  const url = "http://localhost:8080/";
+  const url = "http://localhost:8080/api/";
 
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -139,12 +140,18 @@ function Search() {
       console.error(error);
     }
   }
-  async function fetchHistoricalPrices(ticker) {
+  async function fetchHistoricalPrices(ticker, timestamp) {
+    console.log("Timestamp:", timestamp);
+    let CurrentTime = new Date().getTime();
+    if (Math.abs(CurrentTime - timestamp * 1000) < 300000) {
+      console.log("Market is closed");
+      CurrentTime = CurrentTime - 63113904000;
+    }
     const queryParams = new URLSearchParams({
       timeNumber: 1,
       timeUnit: "day",
-      fromDate: new Date().getTime() - 63113904000,
-      toDate: new Date().getTime(),
+      fromDate: CurrentTime - 63113904000,
+      toDate: CurrentTime,
     });
     console.log("Query Params", queryParams);
     try {
@@ -160,18 +167,18 @@ function Search() {
       );
       const data = await response.json();
       setHistoricalPrices(data);
-      console.log(data);
+      console.log("Fetched Historical Prices", data);
     } catch (error) {
       console.error(error);
     }
   }
   async function fetchHourlyPrices(ticker, timestamp) {
+    const currentTime = new Date();
+    let toDate = currentTime.getTime();
+    console.log("Current Time", currentTime.getTime() - timestamp * 1000);
     try {
-      const currentTime = new Date();
-      let toDate = currentTime.getTime();
-
       if (timestamp) {
-        if (Math.abs(currentTime - toDate) > 300000) {
+        if (Math.abs(currentTime.getTime() - timestamp * 1000) > 300000) {
           toDate = timestamp * 1000;
         }
       } else {
@@ -230,6 +237,7 @@ function Search() {
     }
   }
   async function handleSell(ticker, quantityToSell, totalCost) {
+    setSelectedStock(portfolioData.find((item) => item.ticker === ticker));
     const stock = portfolioData.find((item) => item.ticker === ticker);
     if (!stock) {
       console.error("Stock not found in portfolio");
@@ -248,7 +256,6 @@ function Search() {
     const newWalletBalance = wallet + sellTotal;
     setWallet(newWalletBalance);
 
-    // Ensure stock.quantity is treated as a number and calculate new quantity
     const newQuantity = parseInt(stock.quantity, 10) - quantityToSellNum;
     const updatedStock = {
       ticker: stock.ticker,
@@ -272,7 +279,7 @@ function Search() {
   async function deletePortfolioInDatabase(ticker) {
     try {
       const response = await fetch(
-        `http://localhost:8080/portfolio/DELETE/${ticker}`,
+        `http://localhost:8080/api/portfolio/DELETE/${ticker}`,
         {
           method: "DELETE",
           headers: {
@@ -290,6 +297,7 @@ function Search() {
     }
   }
   async function handleBuy(ticker, quantity, totalCost) {
+    setSelectedStock(portfolioData.find((item) => item.ticker === ticker));
     if (totalCost > wallet) {
       console.error("Insufficient funds for this purchase");
       return;
@@ -299,6 +307,7 @@ function Search() {
     const stockExists = portfolioData.find((item) => item.ticker === ticker);
     let updatedPortfolio;
     if (stockExists) {
+      console.log("Stock Exists:", stockExists);
       const newQuantity = quantity + parseInt(stockExists.quantity);
       const newAvgShare =
         (stockExists.avgshare * stockExists.quantity + totalCost) / newQuantity;
@@ -330,7 +339,7 @@ function Search() {
         ticker,
         quantity,
         avgshare: totalCost / quantity,
-        name: selectedStock.name,
+        name: companyData.name,
         price: quoteData.c,
       };
       try {
@@ -352,7 +361,7 @@ function Search() {
   }
   async function addPortfolioToDatabase(data) {
     try {
-      const response = await fetch("http://localhost:8080/portfolio/ADD", {
+      const response = await fetch("http://localhost:8080/api/portfolio/ADD", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -376,7 +385,7 @@ function Search() {
   async function updatePortfolioInDatabase(ticker, data) {
     try {
       const response = await fetch(
-        `http://localhost:8080/portfolio/UPDATE/${ticker}`,
+        `http://localhost:8080/api/portfolio/UPDATE/${ticker}`,
         {
           method: "PUT",
           headers: {
@@ -406,13 +415,14 @@ function Search() {
         try {
           await fetchQuoteData(search).then((data) => {
             fetchHourlyPrices(search, data.t);
+            fetchHistoricalPrices(search, data.t);
           });
           await Promise.all([
             fetchCompanyData(search),
             fetchRecommendationTrend(search),
             fetchPeerData(search),
             fetchNewsData(search),
-            fetchHistoricalPrices(search),
+
             fetchInsiderSentiments(search),
             fetchHistoricalEPSSurprises(search),
           ]);
@@ -422,6 +432,22 @@ function Search() {
           console.error(error);
           setShowResults(false);
         } finally {
+          console.log("Finally");
+          console.log("Search Value:", searchValue);
+          console.log("Ticker:", ticker);
+          console.log("Location:", location);
+          console.log("companyData:", companyData);
+          console.log("quoteData:", quoteData);
+          console.log("portfolioData:", portfolioData);
+          console.log("recommendationTrend:", recommendationTrend);
+          console.log("newsData:", newsData);
+          console.log("selectedStock:", selectedStock);
+          console.log("hourlyPrices:", hourlyPrices);
+          console.log("peerData:", peerData);
+          console.log("historicalPrices:", historicalPrices);
+          console.log("insiderSentimentsData:", insiderSentimentsData);
+          console.log("historicalEPSSurprises:", historicalEPSSurprises);
+
           setLoading(false);
         }
       } else if (searchValue == ticker) {
@@ -512,13 +538,12 @@ function Search() {
             <p>Loading...</p>
           ) : (
             showResults &&
-            (quoteData &&
-            companyData &&
-            portfolioData &&
+            (companyData &&
+            quoteData &&
             recommendationTrend &&
+            newsData &&
             hourlyPrices.results &&
             peerData &&
-            newsData &&
             historicalPrices &&
             insiderSentimentsData &&
             historicalEPSSurprises.length !== 0 ? (
@@ -548,7 +573,7 @@ function Search() {
               </Container>
             ))
           )}
-          {selectedStock && quoteData.c && (
+          {portfolioData && quoteData.c && (
             <SellStockModal
               show={showSellModal}
               onHide={() => setShowSellModal(false)}
@@ -557,12 +582,12 @@ function Search() {
               currentPrice={quoteData.c}
               quantityOwned={
                 portfolioData.find((item) => item.ticker === searchValue)
-                  .quantity
+                  ?.quantity
               }
               onSell={handleSell}
             />
           )}
-          {selectedStock && quoteData.c && (
+          {portfolioData && quoteData.c && (
             <BuyStockModal
               show={showBuyModal}
               onHide={() => setShowBuyModal(false)}

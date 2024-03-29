@@ -1,13 +1,15 @@
+require("dotenv").config();
 const Express = require("express");
 const cors = require("cors");
 const { MongoClient } = require("mongodb");
-require("dotenv").config();
 const finnhub = require("finnhub");
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const app = Express();
+const path = require("path");
 app.use(Express.json());
 app.use(cors());
+app.use(Express.static("dist"));
 
 const CONNECT_STRING = process.env.CONNECT_STRING;
 const DATABASE_NAME = process.env.MONGO_DATABASE;
@@ -32,7 +34,8 @@ async function connectToDatabase() {
     process.exit(1);
   }
 }
-app.get("/watchlist/GET", async (req, res) => {
+
+app.get("/api/watchlist/GET", async (req, res) => {
   console.log("Getting watchlist");
   const database = app.locals.database;
   const watchlist = database.collection("watchlist");
@@ -44,7 +47,7 @@ app.get("/watchlist/GET", async (req, res) => {
   });
   res.json(data);
 });
-app.post("/watchlist/ADD", async (req, res) => {
+app.post("/api/watchlist/ADD", async (req, res) => {
   console.log("Adding ticker to watchlist");
   try {
     const database = app.locals.database;
@@ -61,7 +64,7 @@ app.post("/watchlist/ADD", async (req, res) => {
     });
   }
 });
-app.delete("/watchlist/DELETE/:ticker", async (req, res) => {
+app.delete("/api/watchlist/DELETE/:ticker", async (req, res) => {
   console.log("Deleting ticker from watchlist");
   try {
     const database = app.locals.database;
@@ -90,7 +93,7 @@ app.delete("/watchlist/DELETE/:ticker", async (req, res) => {
     });
   }
 });
-app.get("/portfolio/GET", async (req, res) => {
+app.get("/api/portfolio/GET", async (req, res) => {
   console.log("Getting portfolio");
   const database = app.locals.database;
   const portfolio = database.collection("portfolio");
@@ -102,7 +105,7 @@ app.get("/portfolio/GET", async (req, res) => {
   });
   res.json(data);
 });
-app.post("/portfolio/ADD", async (req, res) => {
+app.post("/api/portfolio/ADD", async (req, res) => {
   console.log("Adding ticker to portfolio");
   const database = app.locals.database;
   const portfolio = database.collection("portfolio");
@@ -111,7 +114,7 @@ app.post("/portfolio/ADD", async (req, res) => {
     res.json(result);
   });
 });
-app.put("/portfolio/UPDATE/:ticker", async (req, res) => {
+app.put("/api/portfolio/UPDATE/:ticker", async (req, res) => {
   console.log("Updating portfolio");
   const database = app.locals.database;
   const portfolio = database.collection("portfolio");
@@ -121,7 +124,7 @@ app.put("/portfolio/UPDATE/:ticker", async (req, res) => {
     res.json(result);
   });
 });
-app.delete("/portfolio/DELETE/:ticker", async (req, res) => {
+app.delete("/api/portfolio/DELETE/:ticker", async (req, res) => {
   console.log("Deleting ticker from portfolio");
   try {
     const database = app.locals.database;
@@ -148,7 +151,7 @@ app.delete("/portfolio/DELETE/:ticker", async (req, res) => {
   }
 });
 //4.1.1 Company's Description
-app.get("/company/:ticker", async (req, res) => {
+app.get("/api/company/:ticker", async (req, res) => {
   console.log("Getting company profile");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/stock/profile2?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
@@ -164,7 +167,7 @@ app.get("/company/:ticker", async (req, res) => {
 });
 
 // 4.1.2 Company's Historical Data
-app.get("/historical/:ticker", async (req, res) => {
+app.get("/api/historical/:ticker", async (req, res) => {
   console.log("Getting historical data");
   const { ticker } = req.params;
   const { fromDate, toDate, timeNumber, timeUnit } = req.query;
@@ -188,7 +191,7 @@ app.get("/historical/:ticker", async (req, res) => {
 });
 
 // 4.1.3 Company's Latest Price of Stock
-app.get("/quote/:ticker", async (req, res) => {
+app.get("/api/quote/:ticker", async (req, res) => {
   console.log("Getting quote");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
@@ -204,7 +207,7 @@ app.get("/quote/:ticker", async (req, res) => {
 });
 
 // 4.1.4 Auto-Complete Search
-app.get("/search/:query", async (req, res) => {
+app.get("/api/search/:query", async (req, res) => {
   console.log("Searching for company");
   const { query } = req.params;
   const url = `https://finnhub.io/api/v1/search?q=${query}&token=${FINNHUB_API_KEY}`;
@@ -220,7 +223,7 @@ app.get("/search/:query", async (req, res) => {
 });
 
 // 4.1.5 Company's News
-app.get("/news/:ticker", async (req, res) => {
+app.get("/api/news/:ticker", async (req, res) => {
   console.log("Getting company news");
   const { ticker } = req.params;
   const today = new Date().toISOString().split("T")[0];
@@ -236,7 +239,7 @@ app.get("/news/:ticker", async (req, res) => {
   }
 });
 // 4.1.6 Company’s Recommendation Trends
-app.get("/recommendation/:ticker", async (req, res) => {
+app.get("/api/recommendation/:ticker", async (req, res) => {
   console.log("Getting company recommendation");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/stock/recommendation?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
@@ -252,7 +255,7 @@ app.get("/recommendation/:ticker", async (req, res) => {
 });
 
 // 4.1.7 Company’s Insider Sentiment
-app.get("/insider/:ticker", async (req, res) => {
+app.get("/api/insider/:ticker", async (req, res) => {
   console.log("Getting company insider");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/stock/insider-sentiment?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
@@ -267,7 +270,7 @@ app.get("/insider/:ticker", async (req, res) => {
   }
 });
 // 4.1.8 Company’s Peers
-app.get("/peers/:ticker", async (req, res) => {
+app.get("/api/peers/:ticker", async (req, res) => {
   console.log("Getting company peers");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/stock/peers?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
@@ -283,7 +286,7 @@ app.get("/peers/:ticker", async (req, res) => {
 });
 
 // 4.1.9 Company’s Earnings
-app.get("/earnings/:ticker", async (req, res) => {
+app.get("/api/earnings/:ticker", async (req, res) => {
   console.log("Getting company earnings");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/stock/earnings?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
@@ -297,7 +300,9 @@ app.get("/earnings/:ticker", async (req, res) => {
     res.status(500).send("Error fetching company earnings.");
   }
 });
-
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
 connectToDatabase();
 process.on("SIGINT", () => process.exit());
 process.on("SIGTERM", () => process.exit());
