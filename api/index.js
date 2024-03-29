@@ -33,6 +33,7 @@ async function connectToDatabase() {
   }
 }
 app.get("/watchlist/GET", async (req, res) => {
+  console.log("Getting watchlist");
   const database = app.locals.database;
   const watchlist = database.collection("watchlist");
   const data = await watchlist.find({}).toArray((err, result) => {
@@ -44,6 +45,7 @@ app.get("/watchlist/GET", async (req, res) => {
   res.json(data);
 });
 app.post("/watchlist/ADD", async (req, res) => {
+  console.log("Adding ticker to watchlist");
   try {
     const database = app.locals.database;
     const watchlist = database.collection("watchlist");
@@ -60,6 +62,7 @@ app.post("/watchlist/ADD", async (req, res) => {
   }
 });
 app.delete("/watchlist/DELETE/:ticker", async (req, res) => {
+  console.log("Deleting ticker from watchlist");
   try {
     const database = app.locals.database;
     const watchlist = database.collection("watchlist");
@@ -88,6 +91,7 @@ app.delete("/watchlist/DELETE/:ticker", async (req, res) => {
   }
 });
 app.get("/portfolio/GET", async (req, res) => {
+  console.log("Getting portfolio");
   const database = app.locals.database;
   const portfolio = database.collection("portfolio");
   const data = await portfolio.find({}).toArray((err, result) => {
@@ -99,6 +103,7 @@ app.get("/portfolio/GET", async (req, res) => {
   res.json(data);
 });
 app.post("/portfolio/ADD", async (req, res) => {
+  console.log("Adding ticker to portfolio");
   const database = app.locals.database;
   const portfolio = database.collection("portfolio");
   const data = req.body;
@@ -107,6 +112,7 @@ app.post("/portfolio/ADD", async (req, res) => {
   });
 });
 app.put("/portfolio/UPDATE/:ticker", async (req, res) => {
+  console.log("Updating portfolio");
   const database = app.locals.database;
   const portfolio = database.collection("portfolio");
   const { ticker } = req.params;
@@ -116,6 +122,7 @@ app.put("/portfolio/UPDATE/:ticker", async (req, res) => {
   });
 });
 app.delete("/portfolio/DELETE/:ticker", async (req, res) => {
+  console.log("Deleting ticker from portfolio");
   try {
     const database = app.locals.database;
     const portfolio = database.collection("portfolio");
@@ -142,6 +149,7 @@ app.delete("/portfolio/DELETE/:ticker", async (req, res) => {
 });
 //4.1.1 Company's Description
 app.get("/company/:ticker", async (req, res) => {
+  console.log("Getting company profile");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/stock/profile2?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
 
@@ -157,6 +165,7 @@ app.get("/company/:ticker", async (req, res) => {
 
 // 4.1.2 Company's Historical Data
 app.get("/historical/:ticker", async (req, res) => {
+  console.log("Getting historical data");
   const { ticker } = req.params;
   const { fromDate, toDate, timeNumber, timeUnit } = req.query;
 
@@ -180,6 +189,7 @@ app.get("/historical/:ticker", async (req, res) => {
 
 // 4.1.3 Company's Latest Price of Stock
 app.get("/quote/:ticker", async (req, res) => {
+  console.log("Getting quote");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
 
@@ -195,6 +205,7 @@ app.get("/quote/:ticker", async (req, res) => {
 
 // 4.1.4 Auto-Complete Search
 app.get("/search/:query", async (req, res) => {
+  console.log("Searching for company");
   const { query } = req.params;
   const url = `https://finnhub.io/api/v1/search?q=${query}&token=${FINNHUB_API_KEY}`;
 
@@ -210,6 +221,7 @@ app.get("/search/:query", async (req, res) => {
 
 // 4.1.5 Company's News
 app.get("/news/:ticker", async (req, res) => {
+  console.log("Getting company news");
   const { ticker } = req.params;
   const today = new Date().toISOString().split("T")[0];
   const url = `https://finnhub.io/api/v1/company-news?symbol=${ticker}&from=2022-01-01&to=${today}&token=${FINNHUB_API_KEY}`;
@@ -225,6 +237,7 @@ app.get("/news/:ticker", async (req, res) => {
 });
 // 4.1.6 Company’s Recommendation Trends
 app.get("/recommendation/:ticker", async (req, res) => {
+  console.log("Getting company recommendation");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/stock/recommendation?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
 
@@ -240,6 +253,7 @@ app.get("/recommendation/:ticker", async (req, res) => {
 
 // 4.1.7 Company’s Insider Sentiment
 app.get("/insider/:ticker", async (req, res) => {
+  console.log("Getting company insider");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/stock/insider-sentiment?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
 
@@ -254,6 +268,7 @@ app.get("/insider/:ticker", async (req, res) => {
 });
 // 4.1.8 Company’s Peers
 app.get("/peers/:ticker", async (req, res) => {
+  console.log("Getting company peers");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/stock/peers?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
 
@@ -269,6 +284,7 @@ app.get("/peers/:ticker", async (req, res) => {
 
 // 4.1.9 Company’s Earnings
 app.get("/earnings/:ticker", async (req, res) => {
+  console.log("Getting company earnings");
   const { ticker } = req.params;
   const url = `https://finnhub.io/api/v1/stock/earnings?symbol=${ticker}&token=${FINNHUB_API_KEY}`;
 
