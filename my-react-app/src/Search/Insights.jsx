@@ -46,6 +46,7 @@ function Insights({
   const recommendationTrendsOptions = {
     chart: {
       type: "column",
+      backgroundColor: "#f4f4f4",
     },
     title: {
       text: "Recommendation Trends",
@@ -89,17 +90,17 @@ function Insights({
       {
         name: "Hold",
         data: recommendationTrendData.Hold.reverse(),
-        color: "#a6d96a",
+        color: "#fdae61",
       },
       {
         name: "Sell",
         data: recommendationTrendData.Sell.reverse(),
-        color: "#fdae61",
+        color: "#d73027",
       },
       {
         name: "Strong Sell",
         data: recommendationTrendData["Strong Sell"].reverse(),
-        color: "#d73027",
+        color: "#7F3232",
       },
     ],
   };
@@ -123,6 +124,7 @@ function Insights({
   const historicalEPSSurprisesOptions = {
     chart: {
       type: "spline",
+      backgroundColor: "#f4f4f4",
     },
     title: {
       text: "Historical EPS Surprises",
@@ -168,7 +170,7 @@ function Insights({
   };
 
   const InsiderSentiments = ({ data }) => (
-    <Table striped bordered hover size="sm">
+    <Table size="sm" className="insider-sentiments-table">
       <thead>
         <tr>
           <th>{companyData.name}</th>
@@ -177,30 +179,33 @@ function Insights({
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr className="total">
           <td>Total</td>
-          <td>{total}</td>
+          <td>{total.toFixed(2)}</td>
           <td>{change}</td>
         </tr>
-        <tr>
+        <tr className="positive">
           <td>Positive</td>
-          <td>{positive}</td>
+          <td>{positive.toFixed(2)}</td>
           <td>{posChange}</td>
         </tr>
-        <tr>
+        <tr className="negative">
           <td>Negative</td>
-          <td>{negative}</td>
+          <td>{negative.toFixed(2)}</td>
           <td>{negChange}</td>
         </tr>
       </tbody>
     </Table>
   );
+
   return (
     <Container fluid>
-      <Row>
-        <Col md={12} sm={12}>
+      <Row className="text-center">
+        <Col md={3}></Col>
+        <Col md={6} sm={12}>
           <InsiderSentiments data={insiderSentimentsData} />
         </Col>
+        <Col md={3}></Col>
       </Row>
       <Row>
         <Col md={6} sm={12}>

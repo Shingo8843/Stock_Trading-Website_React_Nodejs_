@@ -39,29 +39,36 @@ function SellStockModal({
           <Form.Group className="mb-3">
             <Form.Label>Current Price: {currentPrice.toFixed(2)}</Form.Label>
           </Form.Group>
-          <Form.Group className="mb-3">
+          {/* <Form.Group className="mb-3">
             <Form.Label>Quantity Owned: {quantityOwned}</Form.Label>
-          </Form.Group>
+          </Form.Group> */}
           <Form.Group className="mb-3">
-            <Form.Label>Quantity to Sell</Form.Label>
+            <Form.Label>Quantity</Form.Label>
             <Form.Control
               type="number"
               value={quantityToSell}
               onChange={handleQuantityChange}
               min={0}
-              max={quantityOwned}
+              // max={quantityOwned}
             />
           </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Total Return: {total.toFixed(2)}</Form.Label>
-          </Form.Group>
+          {/* <Form.Group className="mb-3">
+            <Form.Label>Total: {total.toFixed(2)}</Form.Label>
+          </Form.Group> */}
+          {quantityToSell > quantityOwned && (
+            <Form.Text className="text-danger">
+              You cannot sell the stocks that you don't have.
+            </Form.Text>
+          )}
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Close
-        </Button>
-        <Button variant="primary" onClick={handleSellClick}>
+      <Modal.Footer className="d-flex justify-content-between align-items-center">
+        <span>Total: {total.toFixed(2)}</span>
+        <Button
+          variant="success"
+          onClick={handleSellClick}
+          disabled={quantityToSell <= 0 || quantityOwned < quantityToSell}
+        >
           Sell
         </Button>
       </Modal.Footer>

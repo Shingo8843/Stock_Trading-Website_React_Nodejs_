@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
-import { InputGroup, FormControl, Button, ListGroup } from "react-bootstrap";
+import {
+  InputGroup,
+  FormControl,
+  Button,
+  ListGroup,
+  Container,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-
+import { Spinner } from "react-bootstrap";
 function SearchBar({ handleClear, fetchsuggestions }) {
   const [suggest, setSuggest] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -23,18 +29,35 @@ function SearchBar({ handleClear, fetchsuggestions }) {
       setSuggest([]);
     }
   }, [searchValue]);
-
+  function useDebouce(val, delay) {
+    const [debounceValue, setDebounceValue] = useState(val);
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebounceValue(val);
+      }, delay);
+      return () => {
+        clearTimeout(handler);
+      };
+    }, [val, delay]);
+    return debounceValue;
+  }
   function onSearchClick() {
     if (!searchValue.trim()) {
       return;
     }
-    console.log("searchValue", searchValue);
-    navigate(`/search/${searchValue}`, { state: { search: searchValue } });
-    setSuggest([]);
+    function handlesearch() {
+      console.log("searchValue", searchValue);
+      navigate(`/search/${searchValue}`, { state: { search: searchValue } });
+      setSuggest([]);
+      setShowSuggestions(false);
+    }
+    if (debouncedSearchValue === searchValue) {
+      handlesearch();
+    }
   }
-
+  const debouncedSearchValue = useDebouce(searchValue, 500);
   return (
-    <div className="stock-search my-3">
+    <Container className="stock-search my-3">
       <InputGroup className="search-input-group">
         <FormControl
           placeholder="Enter stock ticker symbol"
@@ -57,31 +80,35 @@ function SearchBar({ handleClear, fetchsuggestions }) {
         >
           <FontAwesomeIcon icon={faTimes} />
         </Button>
-      </InputGroup>
-      {showSuggestions ? (
-        loading || !suggest.length ? (
-          <p>Loading...</p>
-        ) : (
-          <ListGroup className="suggestions-list">
-            {suggest.map((s, index) => (
-              <ListGroup.Item key={index} className="suggestion-item">
-                <div
-                  className="suggestion"
-                  onClick={() => {
-                    setSearchValue(s.symbol);
-                    onSearchClick();
-                  }}
-                >
-                  <span>
-                    {s.symbol} | {s.description}
-                  </span>
-                </div>
+        {showSuggestions ? (
+          loading || !suggest.length ? (
+            <ListGroup className="suggestions-list">
+              <ListGroup.Item key={"loading"} className="suggestion-item">
+                <Spinner animation="border" />
               </ListGroup.Item>
-            ))}
-          </ListGroup>
-        )
-      ) : null}
-    </div>
+            </ListGroup>
+          ) : (
+            <ListGroup className="suggestions-list">
+              {suggest.map((s, index) => (
+                <ListGroup.Item key={index} className="suggestion-item">
+                  <div
+                    className="suggestion"
+                    onClick={() => {
+                      setSearchValue(s.symbol);
+                      onSearchClick();
+                    }}
+                  >
+                    <span>
+                      {s.symbol} | {s.description}
+                    </span>
+                  </div>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          )
+        ) : null}
+      </InputGroup>
+    </Container>
   );
 }
 

@@ -19,13 +19,14 @@ function SearchResult({
   historicalEPSSurprises,
   addWatchlist,
   removeWatchlist,
+  setshowWatchlistAddAlert,
+  setshowWatchlistRemoveAlert,
   star,
   setStar,
   onSell,
   onBuy,
 }) {
   const [key, setKey] = useState("summary");
-
   return (
     <Container>
       <Current
@@ -34,6 +35,8 @@ function SearchResult({
         portfolioData={portfolioData}
         addWatchlist={addWatchlist}
         removeWatchlist={removeWatchlist}
+        setshowWatchlistAddAlert={setshowWatchlistAddAlert}
+        setshowWatchlistRemoveAlert={setshowWatchlistRemoveAlert}
         star={star}
         setStar={setStar}
         onBuy={onBuy}

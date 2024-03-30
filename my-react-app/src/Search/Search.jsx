@@ -8,8 +8,7 @@ import SellStockModal from "../Portfolio/SellStockModal";
 import { useNavigate } from "react-router-dom";
 import { useLocation, useParams } from "react-router-dom";
 import { useSearch } from "../SearchContext";
-import Current from "./Current";
-
+import { Spinner } from "react-bootstrap";
 function Search() {
   const url = "http://localhost:8080/api/";
 
@@ -39,7 +38,15 @@ function Search() {
   const initialWallet = 25000;
   const { ticker } = useParams();
   const { searchValue, setSearchValue } = useSearch();
+  const [showSellAlert, setShowSellAlert] = useState(false);
+  const [showBuyAlert, setShowBuyAlert] = useState(false);
+  const [showWatchlistAddAlert, setshowWatchlistAddAlert] = useState(false);
+  const [showWatchlistRemoveAlert, setshowWatchlistRemoveAlert] =
+    useState(false);
   const navigate = useNavigate();
+  useEffect(() => {
+    setLoading(true);
+  }, [searchValue]);
   useEffect(() => {
     if (Watchlist.find((item) => item.ticker === searchValue)) {
       setStar(true);
@@ -104,7 +111,7 @@ function Search() {
     try {
       const response = await fetch(url + `search/${suggestVal}`);
       const data = await response.json();
-      // console.log("Suggestions:", data);
+      console.log("Suggestions:", data);
       return data.result;
     } catch (error) {
       console.error(error);
@@ -275,6 +282,7 @@ function Search() {
       await updatePortfolioInDatabase(ticker, updatedStock);
     }
     setSelectedStock(updatedPortfolio.find((item) => item.ticker === ticker));
+    setShowSellAlert(true);
   }
   async function deletePortfolioInDatabase(ticker) {
     try {
@@ -349,7 +357,6 @@ function Search() {
       }
       updatedPortfolio = [...portfolioData, newStock];
     }
-
     setportfolioData(updatedPortfolio);
     console.log("Updated Portfolio:", updatedPortfolio);
     updatedPortfolio.forEach(async (stock) => {
@@ -358,6 +365,7 @@ function Search() {
         avgshare: stock.avgshare,
       });
     });
+    setShowBuyAlert(true);
   }
   async function addPortfolioToDatabase(data) {
     try {
@@ -407,6 +415,9 @@ function Search() {
   useEffect(() => {
     console.log("Location:", location);
     async function fetchData() {
+      setShowSellAlert(false);
+      setShowBuyAlert(false);
+      setshowWatchlistAddAlert(false);
       const search = ticker || location.state?.search;
       console.log("Search:", search, searchValue);
       if (search && search !== searchValue) {
@@ -465,8 +476,13 @@ function Search() {
   });
   useEffect(() => {
     fetchPortfolio();
+    async function SetWalletPortfolio() {
+      await fetchPortfolio().then((data) => {
+        updateWallet(data);
+      });
+    }
+    SetWalletPortfolio();
     fetchWatchlist();
-    updateWallet(portfolioData);
   }, [searchValue]);
   function updateWallet(portfolioItems) {
     const totalInvestment = portfolioItems.reduce((acc, item) => {
@@ -499,6 +515,9 @@ function Search() {
     navigate("/search");
     setSearchValue("");
     setShowResults(false);
+    setShowBuyAlert(false);
+    setShowSellAlert(false);
+    setshowWatchlistAddAlert(false);
   }
 
   async function fetchPortfolio() {
@@ -517,6 +536,7 @@ function Search() {
     try {
       const data = await response.json();
       setportfolioData(data);
+      return data;
     } catch (error) {
       console.error("Error parsing JSON:", error);
       throw new Error("Error parsing JSON.");
@@ -534,8 +554,51 @@ function Search() {
             handleClear={handleClear}
             fetchsuggestions={fetchsuggestions}
           />
+          {showWatchlistAddAlert && (
+            <Alert
+              className="Watchlist-Transaction-container text-center"
+              variant="success"
+              onClose={() => setshowWatchlistAddAlert(false)}
+              dismissible
+            >
+              <p>{searchValue} added to watchlist successfully.</p>
+            </Alert>
+          )}
+          {showWatchlistRemoveAlert && (
+            <Alert
+              className="Watchlist-Transaction-container text-center"
+              variant="danger"
+              onClose={() => setshowWatchlistRemoveAlert(false)}
+              dismissible
+            >
+              <p>{searchValue} removed from watchlist successfully.</p>
+            </Alert>
+          )}
+          {showBuyAlert && (
+            <Alert
+              className="Buy-Transaction-container text-center"
+              variant="success"
+              onClose={() => setShowBuyAlert(false)}
+              dismissible
+            >
+              <p>{searchValue} bought successfully.</p>
+            </Alert>
+          )}
+          {showSellAlert && (
+            <Alert
+              className="Sell-Transaction-container text-center"
+              variant="danger"
+              onClose={() => setShowSellAlert(false)}
+              dismissible
+            >
+              <p>{searchValue} sold successfully.</p>
+            </Alert>
+          )}
+
           {loading ? (
-            <p>Loading...</p>
+            <Container className="text-center">
+              <Spinner animation="border" />
+            </Container>
           ) : (
             showResults &&
             (companyData &&
@@ -544,7 +607,7 @@ function Search() {
             newsData &&
             hourlyPrices.results &&
             peerData &&
-            historicalPrices &&
+            historicalPrices.results &&
             insiderSentimentsData &&
             historicalEPSSurprises.length !== 0 ? (
               <SearchResult
@@ -562,6 +625,8 @@ function Search() {
                 removeWatchlist={removeWatchlist}
                 star={star}
                 setStar={setStar}
+                setshowWatchlistAddAlert={setshowWatchlistAddAlert}
+                setshowWatchlistRemoveAlert={setshowWatchlistRemoveAlert}
                 onBuy={() => setShowBuyModal(true)}
                 onSell={() => setShowSellModal(true)}
               />

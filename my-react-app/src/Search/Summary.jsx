@@ -35,6 +35,7 @@ function Summary({ quoteData, companyData, peerData, hourlyPrices }) {
       {
         name: "Stock Price",
         data: prices,
+        color: "#28a745",
       },
     ],
   };
@@ -58,53 +59,63 @@ function Summary({ quoteData, companyData, peerData, hourlyPrices }) {
   return (
     <Container fluid>
       <Row>
-        <Col md={6} variance="dark" className="text-center">
-          <p>
-            <span className="summary-hloc">High Price:</span> {quoteData.h}
-          </p>
-          <p>
-            <span className="summary-hloc">Low Price:</span> {quoteData.l}
-          </p>
-          <p>
-            <span className="summary-hloc">Open Price:</span> {quoteData.o}
-          </p>
-          <p>
-            <span className="summary-hloc">Current Price:</span> {quoteData.c}
-          </p>
-          <h5 className="about-company">About the company</h5>
-          <p>
-            <span className="summary-hloc">IPO Start Date:</span>{" "}
-            {companyData.ipo}
-          </p>
-          <p>
-            <span className="summary-hloc"> Industry:</span>{" "}
-            {companyData.finnhubIndustry}
-          </p>
+        <Col smd={6} variance="dark" className="text-center">
+          <Row>
+            <Col sm={12} md={6}>
+              <p></p>
+              <p className="small-hlop  ">
+                <span className="summary-hloc">High Price:</span> {quoteData.h}
+              </p>
+              <p className="small-hlop ">
+                <span className="summary-hloc">Low Price:</span> {quoteData.l}
+              </p>
+              <p className="small-hlop ">
+                <span className="summary-hloc">Open Price:</span> {quoteData.o}
+              </p>
+              <p className="small-hlop ">
+                <span className="summary-hloc">Current Price:</span>{" "}
+                {quoteData.c}
+              </p>
+              <p></p>
+              <p></p>
+            </Col>
+            <Col sm={12} md={12}>
+              <h5 className="about-company">About the company</h5>
+              <p>
+                <span className="summary-hloc">IPO Start Date:</span>{" "}
+                {companyData.ipo}
+              </p>
+              <p>
+                <span className="summary-hloc"> Industry:</span>{" "}
+                {companyData.finnhubIndustry}
+              </p>
 
-          <p>
-            <span className="summary-hloc">Webpage:</span>{" "}
-            {companyData.weburl ? (
-              <a href={companyData.weburl} target="_blank" rel="noreferrer">
-                {companyData.weburl}
-              </a>
-            ) : (
-              "N/A"
-            )}{" "}
-          </p>
+              <p>
+                <span className="summary-hloc">Webpage:</span>{" "}
+                {companyData.weburl ? (
+                  <a href={companyData.weburl} target="_blank" rel="noreferrer">
+                    {companyData.weburl}
+                  </a>
+                ) : (
+                  "N/A"
+                )}{" "}
+              </p>
 
-          <p className="summary-hloc">
-            Company <param name="" value="" />
-            peers:
-          </p>
-          <div>
-            {peerData.map((peer, index) => (
-              <span key={index} className="peer-link">
-                <a href="" onClick={() => handleClick(peer)}>
-                  {peer}
-                </a>{" "}
-              </span>
-            ))}
-          </div>
+              <p className="summary-hloc">
+                Company <param name="" value="" />
+                peers:
+              </p>
+              <div>
+                {peerData.map((peer, index) => (
+                  <span key={index} className="peer-link">
+                    <a href="" onClick={() => handleClick(peer)}>
+                      {peer}
+                    </a>{" "}
+                  </span>
+                ))}
+              </div>
+            </Col>
+          </Row>
         </Col>
         <Col lg md={6} xs>
           <HighchartsReact highcharts={Highcharts} options={options} />

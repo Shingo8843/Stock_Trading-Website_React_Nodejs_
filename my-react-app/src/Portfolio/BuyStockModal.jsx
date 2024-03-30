@@ -15,7 +15,7 @@ function BuyStockModal({ show, onHide, wallet, ticker, currentPrice, onBuy }) {
     console.log("Buying", quantity, "shares of", ticker, "for", total);
     onBuy(ticker, quantity, total);
 
-    onHide(); // Hide the modal after buying
+    onHide();
   };
 
   return (
@@ -40,16 +40,11 @@ function BuyStockModal({ show, onHide, wallet, ticker, currentPrice, onBuy }) {
               min={1}
             />
           </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Total: {total.toFixed(2)}</Form.Label>
-          </Form.Group>
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Close
-        </Button>
-        <Button variant="primary" onClick={handleBuyClick}>
+      <Modal.Footer className="d-flex justify-content-between align-items-center">
+        <span>Total: {total.toFixed(2)}</span>
+        <Button variant="success" onClick={handleBuyClick}>
           Buy
         </Button>
       </Modal.Footer>

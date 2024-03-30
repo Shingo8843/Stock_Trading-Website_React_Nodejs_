@@ -1,6 +1,6 @@
 import { React, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 const WatchlistItem = ({
   ticker,
@@ -40,20 +40,24 @@ const WatchlistItem = ({
             X
           </Button>
         </div>
-        <div className="d-flex justify-content-between align-items-center">
-          <div>
+        <Row>
+          <Col>
             <Card.Title>{ticker}</Card.Title>
-            <Card.Subtitle className="mb-2 text-muted">
-              {companyName}
-            </Card.Subtitle>
-          </div>
-          <div className={priceChangeClass}>
-            <div>{price}</div>
-            <div>
+          </Col>
+          <Col>
+            <Card.Title className={`${priceChangeClass}`}>{price}</Card.Title>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Card.Subtitle>{companyName}</Card.Subtitle>
+          </Col>
+          <Col>
+            <Card.Subtitle className={`${priceChangeClass}`}>
               {change >= 0 ? "▲" : "▼"} {change} ({formattedPercentageChange}%)
-            </div>
-          </div>
-        </div>
+            </Card.Subtitle>
+          </Col>
+        </Row>
       </Card.Body>
     </Card>
   );

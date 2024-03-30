@@ -221,7 +221,7 @@ function Portfolio() {
         <Header />
         <Container className="main-content">
           <h2 className="text-start">My Portfolio</h2>
-          <p className="text-start">Money in Wallet: {wallet}</p>
+          <p className="text-start">Money in Wallet: {wallet.toFixed(2)}</p>
           <p className="text-start">Loading...</p>
         </Container>
       </Container>
@@ -246,7 +246,7 @@ function Portfolio() {
       <Header />
       <Container className="main-content">
         <h2 className="text-start">My Portfolio</h2>
-        <p className="text-start">Money in Wallet: {wallet}</p>
+        <p className="text-start">Money in Wallet: {wallet.toFixed(2)}</p>
         {portfoliodata.map((item) => (
           <PortfolioItem
             key={item.ticker}

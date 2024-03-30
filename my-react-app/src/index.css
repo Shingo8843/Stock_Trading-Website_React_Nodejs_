@@ -64,6 +64,7 @@
 .about-company {
   font-weight: bold;
   text-decoration: underline;
+  margin-bottom: 1rem;
 }
 .news-card {
   display: flex;
@@ -150,19 +151,38 @@
   font-size: 1.25rem;
 }
 .share-container {
-  display: flex;
-
   align-items: center;
   margin-top: 1rem;
-  background-color: #f8f9fa;
+  background-color: white;
   padding: 0.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
 }
 .share-modal-title {
   font-weight: bold;
+  margin: 0;
 }
 .share-modal-date {
   color: #666;
   font-weight: normal;
+  font-size: medium;
+  margin: 0;
+}
+.fa-twitter {
+  width: 24px;
+  height: 24px;
+  margin: 0px;
+  padding: 0px;
+}
+.fa-facebook-f {
+  width: 15px;
+  height: auto;
+  margin: 0px;
+  padding: 0px;
+}
+.share-modal-button {
+  width: 40px;
+  height: 40px;
 }
 .stock-search {
   width: 100%;
@@ -191,12 +211,6 @@
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.form-control:focus {
-  z-index: 2;
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
 .input-group-append .btn {
   padding: 0.5rem 1rem;
   margin-left: -1px;
@@ -213,11 +227,6 @@
   border-radius: 0;
 }
 
-.input-group-append .btn:hover {
-  background-color: blue;
-  border-color: blue;
-}
-
 .font-awesome-icon {
   display: inline-block;
   width: 1.5em;
@@ -228,7 +237,6 @@
 .list-group {
   width: 100%;
   position: absolute;
-  z-index: 3;
 }
 
 .list-group-item {
@@ -272,6 +280,8 @@
   border-left: none;
   border-radius: 0;
   padding-left: none;
+  border-radius: 0px 20px 20px 0px !important;
+  z-index: 6;
 }
 .search-btn {
   border: 3px solid blue;
@@ -282,6 +292,7 @@
   border-radius: 0;
   padding-right: none;
   margin: 0%;
+  z-index: 6;
 }
 .clear-btn {
   border-radius: 0 20px 20px 0;
@@ -294,26 +305,42 @@
   overflow-y: auto;
   margin-top: 0.5rem;
   border-radius: 0.5rem;
+  width: 100%;
+  padding-right: (var(--bs-gutter-x) * 1);
+  z-index: 8;
 }
 
-.suggestions-list:hover {
-  background-color: #f8f9fa;
-}
 .suggestion-item {
   cursor: pointer;
   display: block;
 }
-
-.suggestion-item:hover {
-  background-color: #f8f9fa;
-}
-
 .suggestion {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
+.search-input {
+  z-index: 6 !important;
+}
 
+.search-input-group {
+  position: relative;
+}
+
+.suggestions-list {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: -1rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding-left: 0;
+  padding-right: 0;
+  background-color: white;
+}
 @media (max-width: 768px) {
   .stock-search {
     padding: 0 15px;
@@ -326,7 +353,6 @@
 }
 .search {
   width: 100%;
-  /* center its  */
 
   justify-content: center;
   margin: 0 auto;
@@ -365,4 +391,129 @@
   color: black;
   text-align: center;
   font-weight: bold;
+}
+.stock-card {
+  background-color: white;
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 10px;
+  border: none;
+}
+
+.stock-info .card-title,
+.price-info-up .card-title,
+.price-info-down .card-title {
+  font-weight: bold;
+}
+
+.stock-info .card-subtitle,
+.market-status {
+  color: #6c757d;
+}
+
+.company-logo .card-img {
+  width: 100%;
+  max-width: 80px;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 0px;
+}
+
+.price-info-up .card-title,
+.price-info-up .card-text,
+.price-info-up .fa-arrow-up {
+  color: #28a745;
+}
+
+.price-info-down .card-title,
+.price-info-down .card-text,
+.price-info-down .fa-arrow-down {
+  color: #dc3545;
+}
+
+.market-status {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.stock-quote .quote-current,
+.stock-quote .quote-change {
+  font-size: 1.5rem;
+}
+
+.stock-quote .price-up {
+  color: #28a745; /* Green for price up */
+}
+
+.stock-quote .price-up .fa-arrow-up {
+  color: #28a745;
+}
+
+.stock-quote .price-down {
+  color: #dc3545; /* Red for price down */
+}
+
+.stock-quote .price-down .fa-arrow-down {
+  color: #dc3545;
+}
+
+.stock-quote .no-change {
+  color: #6c757d; /* Grey for no change */
+}
+
+.stock-quote .quote-time {
+  color: #6c757d;
+}
+.current-coompany-title {
+  font-size: 2rem;
+  font-weight: normal;
+}
+.stock-card-subtitle {
+  font-size: 1rem;
+  font-weight: bold;
+}
+.quote-current.card-title {
+  font-size: 2rem;
+  font-weight: normal;
+}
+.market-status-current {
+  font-weight: bold;
+}
+.small-hlop {
+  font-size: 0.75rem;
+  margin-bottom: 0px;
+}
+.share-modal-share {
+  width: 100%;
+}
+.btn-close {
+  color: #1da1f2;
+}
+.insider-sentiments-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+}
+
+.insider-sentiments-table thead {
+  border-bottom: 1px solid #dee2e6;
+}
+.insider-sentiments-table tbody tr {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.insider-sentiments-table th,
+.insider-sentiments-table td {
+  border: none;
+  border-bottom: #6c757d;
+  padding: 8px;
+  text-align: center;
+  background-color: white;
+}
+
+.insider-sentiments-table tr th {
+  background-color: white;
+}
+.insider-sentiments-table tr td {
+  background-color: white;
 }

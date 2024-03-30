@@ -12,6 +12,8 @@ function Current({
   onBuy,
   onSell,
   portfolioData,
+  setshowWatchlistAddAlert,
+  setshowWatchlistRemoveAlert,
   star,
   setStar,
   addWatchlist,
@@ -23,8 +25,12 @@ function Current({
   const toggleStar = () => {
     if (star) {
       removeWatchlist(companyData.ticker);
+      setshowWatchlistAddAlert(false);
+      setshowWatchlistRemoveAlert(true);
     } else {
       addWatchlist(companyData.ticker, companyData.name);
+      setshowWatchlistAddAlert(true);
+      setshowWatchlistRemoveAlert(false);
     }
     setStar(!star);
   };
@@ -38,103 +44,80 @@ function Current({
     const seconds = date.getSeconds();
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
+  const getPriceChangeClass = (change) => {
+    return change > 0 ? "price-up" : change < 0 ? "price-down" : "no-change";
+  };
   const CurrentTime = new Date();
   return (
-    <Card className="m-2" bg="light">
+    <Card className="stock-card">
       <Card.Body className="text-center">
         <Row>
-          <Col xs={5} md={4} lg={4} className="my-auto">
-            <Card.Title>{companyData.ticker}</Card.Title>
-            <Card.Subtitle className="mb-2 text-muted">
-              {companyData.name}
+          <Col xs={5} md={4} lg={4} className="my-auto stock-info">
+            <Card.Title className="current-coompany-title">
+              {companyData.ticker}
               <FontAwesomeIcon
                 icon={star ? faStarSolid : faStarRegular}
-                className={star ? "text-warning" : "text-muted"}
+                className={
+                  star ? "text-warning current-star" : "text-muted current-star"
+                }
                 onClick={toggleStar}
                 style={{ cursor: "pointer" }}
               />
+            </Card.Title>
+            <Card.Subtitle className="mb-2 text-muted stock-card-subtitle">
+              {companyData.name}
             </Card.Subtitle>
             <Card.Text className="text-muted">{companyData.exchange}</Card.Text>
-            <Button variant="primary" size="sm" onClick={onBuy}>
+            <Button variant="success" size="sm" onClick={onBuy}>
               Buy
             </Button>{" "}
             {portfolioData.find(
               (item) => item.ticker === companyData.ticker
             ) ? (
-              <Button variant="secondary" size="sm" onClick={onSell}>
+              <Button variant="danger" size="sm" onClick={onSell}>
                 Sell
               </Button>
             ) : (
               ""
             )}
           </Col>
-          <Col xs md lg className="my-auto text-center">
+          <Col xs={2} md={4} lg={4} className="text-center company-logo">
             <Card.Img src={companyData.logo} />
           </Col>
-          {quoteData.d > 0 ? (
-            <Col xs={5} md={4} lg={4} className="my-auto ">
-              <Card.Title className="text-success">
-                {quoteData.c ? `$${quoteData.c}` : "$0.00"}
-              </Card.Title>
-              <Card.Text className="text-success">
-                {quoteData.d ? (
-                  quoteData.d > 0 ? (
-                    <FontAwesomeIcon
-                      icon={faArrowUp}
-                      className="text-success"
-                    />
-                  ) : (
-                    <FontAwesomeIcon
-                      icon={faArrowDown}
-                      className="text-danger"
-                    />
-                  )
-                ) : (
-                  ""
-                )}
-                {quoteData.d ? `${quoteData.d} (${quoteData.dp}%)` : ""}
-              </Card.Text>
-              <Card.Text>
-                <small>
-                  {quoteData.t
-                    ? `${numberToTime(quoteData.t)}`
-                    : "No data available"}
-                </small>
-              </Card.Text>
-            </Col>
-          ) : (
-            <Col xs={5} md={4} lg={4} className="my-auto">
-              <Card.Title className="text-danger">
-                {quoteData.c ? `$${quoteData.c}` : "$0.00"}
-              </Card.Title>
-              <Card.Text className="text-danger">
-                {quoteData.d ? (
-                  quoteData.d > 0 ? (
-                    <i className="fa fa-arrow-up text-success"></i>
-                  ) : (
-                    <i className="fa fa-arrow-down text-danger"></i>
-                  )
-                ) : (
-                  ""
-                )}
-                {quoteData.d ? `${quoteData.d} (${quoteData.dp}%)` : ""}
-              </Card.Text>
-              <Card.Text>
-                <small>
-                  {quoteData.t
-                    ? `${numberToTime(quoteData.t)}`
-                    : "No data available"}
-                </small>
-              </Card.Text>
-            </Col>
-          )}
+          <Col xs={5} md={4} lg={4} className="my-auto stock-quote">
+            <Card.Title
+              className={`quote-current ${getPriceChangeClass(quoteData.d)}`}
+            >
+              {quoteData.c ? `${quoteData.c}` : "0.00"}
+            </Card.Title>
+            <Card.Text
+              className={`quote-change ${getPriceChangeClass(quoteData.d)}`}
+            >
+              {quoteData.d !== 0 && <span>{quoteData.d > 0 ? "▲" : "▼"}</span>}
+
+              {quoteData.d
+                ? `${quoteData.d} (${quoteData.dp.toFixed(2)}%)`
+                : ""}
+            </Card.Text>
+            <Card.Text>
+              <small className="quote-time">
+                {quoteData.t
+                  ? `${numberToTime(quoteData.t)}`
+                  : "No data available"}
+              </small>
+            </Card.Text>
+          </Col>
         </Row>
         <Row>
           <Col className="text-muted text-center">
             {Math.abs(CurrentTime - quoteData.t * 1000) < 300000 ? (
-              <small className="text-success">Market is open</small>
+              <small className="text-success market-status-current">
+                Market is open
+              </small>
             ) : (
-              <small className="text-danger">Market is closed</small>
+              <small className="text-danger market-status-current">
+                Market is closed
+              </small>
             )}
           </Col>
         </Row>
