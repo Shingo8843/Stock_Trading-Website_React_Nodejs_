@@ -15,6 +15,8 @@ function Portfolio() {
   const [showSellModal, setShowSellModal] = useState(false);
   const [selectedStock, setSelectedStock] = useState(null);
   const location = useLocation();
+  const [showSellAlert, setShowSellAlert] = useState(false);
+  const [showBuyAlert, setShowBuyAlert] = useState(false);
   console.log("location", location);
   useEffect(() => {
     const fetchAndUpdatePortfolio = async () => {
@@ -121,6 +123,8 @@ function Portfolio() {
     } else {
       await updatePortfolioInDatabase(ticker, updatedStock);
     }
+    setShowSellAlert(true);
+    setShowBuyAlert(false);
   }
   async function deletePortfolioInDatabase(ticker) {
     try {
@@ -185,6 +189,8 @@ function Portfolio() {
         avgshare: stock.avgshare,
       });
     });
+    setShowBuyAlert(true);
+    setShowSellAlert(false);
   }
   async function updatePortfolioInDatabase(ticker, data) {
     console.log("Update data:", data);
@@ -220,8 +226,8 @@ function Portfolio() {
       <Container>
         <Header />
         <Container className="main-content">
-          <h2 className="text-start">My Portfolio</h2>
-          <p className="text-start">Money in Wallet: {wallet.toFixed(2)}</p>
+          <h1 className="text-start">My Portfolio</h1>
+          <h2 className="text-start">Money in Wallet: ${wallet.toFixed(2)}</h2>
           <p className="text-start">Loading...</p>
         </Container>
       </Container>
@@ -233,9 +239,9 @@ function Portfolio() {
         <Header />
         <Container className="main-content text-center">
           <h1 className="text-start font-weight-bold">My Portfolio</h1>
-          <h5 className="text-start font-weight-bold">
+          <h2 className="text-start font-weight-bold">
             Money in Wallet: ${wallet.toFixed(2)}
-          </h5>
+          </h2>
           <Alert variant="warning">Currently you don't have any stock.</Alert>
         </Container>
       </Container>
@@ -244,9 +250,28 @@ function Portfolio() {
   return (
     <Container>
       <Header />
+
       <Container className="main-content">
-        <h2 className="text-start">My Portfolio</h2>
-        <p className="text-start">Money in Wallet: {wallet.toFixed(2)}</p>
+        {showSellAlert && (
+          <Alert
+            variant="danger"
+            onClose={() => setShowSellAlert(false)}
+            dismissible
+          >
+            {selectedStock.ticker} Stock sold successfully!
+          </Alert>
+        )}
+        {showBuyAlert && (
+          <Alert
+            variant="success"
+            onClose={() => setShowBuyAlert(false)}
+            dismissible
+          >
+            {selectedStock.ticker} Stock bought successfully!
+          </Alert>
+        )}
+        <h1 className="text-start">My Portfolio</h1>
+        <h2 className="text-start">Money in Wallet: ${wallet.toFixed(2)}</h2>
         {portfoliodata.map((item) => (
           <PortfolioItem
             key={item.ticker}

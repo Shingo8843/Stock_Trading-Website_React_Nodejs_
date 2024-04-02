@@ -39,9 +39,9 @@ function SellStockModal({
           <Form.Group className="mb-3">
             <Form.Label>Current Price: {currentPrice.toFixed(2)}</Form.Label>
           </Form.Group>
-          {/* <Form.Group className="mb-3">
-            <Form.Label>Quantity Owned: {quantityOwned}</Form.Label>
-          </Form.Group> */}
+          <Form.Group className="mb-3">
+            <Form.Label>Monew in Wallet: ${wallet.toFixed(2)}</Form.Label>
+          </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Quantity</Form.Label>
             <Form.Control
@@ -52,6 +52,7 @@ function SellStockModal({
               // max={quantityOwned}
             />
           </Form.Group>
+
           {/* <Form.Group className="mb-3">
             <Form.Label>Total: {total.toFixed(2)}</Form.Label>
           </Form.Group> */}

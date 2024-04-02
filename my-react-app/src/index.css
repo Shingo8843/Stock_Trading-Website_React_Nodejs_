@@ -17,17 +17,24 @@
 }
 
 .custom-tabs .nav-tabs {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
   border-bottom: 2px solid #dee2e6;
 }
 
+.custom-tabs .nav-tabs::-webkit-scrollbar {
+  display: none; /* This will hide the scrollbar in WebKit browsers */
+}
+
 .custom-tabs .nav-item {
-  margin-bottom: -2px;
+  display: inline-block; /* Inline-block ensures the tabs stay in a line */
+  margin-right: 0.5rem; /* Optional: adds some space between the tabs */
+  margin-bottom: 1rem;
 }
 
 .custom-tabs .nav-link {
-  width: 100%;
-  border: none;
-  color: #6c757d;
+  padding: 10px 20px; /* Adjust padding as needed */
 }
 
 .custom-tabs .nav-link:hover {
@@ -58,6 +65,7 @@
 .custom-tabs .nav-link.active {
   border-bottom: 3px solid #007bff !important;
 }
+
 .summary-hloc {
   font-weight: bold;
 }
@@ -99,6 +107,43 @@
   color: #333;
   font-size: small;
 }
+@media (max-width: 767px) {
+  .news-card {
+    display: flex;
+    width: 100%;
+    max-width: 40rem;
+    margin: 0.5rem auto;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s;
+    background: #fff;
+  }
+
+  .news-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+    padding: 0.5rem;
+  }
+
+  .news-img {
+    flex-shrink: 0;
+    width: 90%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+  }
+
+  .news-title {
+    margin-left: 1rem;
+    font-weight: normal;
+    color: #333;
+    font-size: small;
+  }
+}
+
 .modal-header {
   background-color: #f8f9fa;
   color: #000;
@@ -394,10 +439,11 @@
 }
 .stock-card {
   background-color: white;
-  margin: 1rem;
-  padding: 1rem;
+
   border-radius: 10px;
   border: none;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
 }
 
 .stock-info .card-title,
@@ -472,6 +518,9 @@
   font-size: 1rem;
   font-weight: bold;
 }
+.stock-card .card-body {
+  padding: 0;
+}
 .quote-current.card-title {
   font-size: 2rem;
   font-weight: normal;
@@ -516,4 +565,12 @@
 }
 .insider-sentiments-table tr td {
   background-color: white;
+}
+.chart-container {
+  margin: 0;
+  padding: 0;
+}
+.search-result-container {
+  margin: 0;
+  padding: 0;
 }

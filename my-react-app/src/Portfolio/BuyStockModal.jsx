@@ -40,11 +40,20 @@ function BuyStockModal({ show, onHide, wallet, ticker, currentPrice, onBuy }) {
               min={1}
             />
           </Form.Group>
+          {quantity > wallet && (
+            <Form.Text className="text-danger">
+              Not enough money in wallet!
+            </Form.Text>
+          )}
         </Form>
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-between align-items-center">
         <span>Total: {total.toFixed(2)}</span>
-        <Button variant="success" onClick={handleBuyClick}>
+        <Button
+          variant="success"
+          onClick={handleBuyClick}
+          disabled={total > wallet || quantity < 1}
+        >
           Buy
         </Button>
       </Modal.Footer>

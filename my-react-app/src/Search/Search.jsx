@@ -44,9 +44,7 @@ function Search() {
   const [showWatchlistRemoveAlert, setshowWatchlistRemoveAlert] =
     useState(false);
   const navigate = useNavigate();
-  useEffect(() => {
-    setLoading(true);
-  }, [searchValue]);
+
   useEffect(() => {
     if (Watchlist.find((item) => item.ticker === searchValue)) {
       setStar(true);
@@ -413,12 +411,12 @@ function Search() {
   }
 
   useEffect(() => {
-    console.log("Location:", location);
+    console.log("Location:", location, ticker);
     async function fetchData() {
       setShowSellAlert(false);
       setShowBuyAlert(false);
       setshowWatchlistAddAlert(false);
-      const search = ticker || location.state?.search;
+      const search = ticker;
       console.log("Search:", search, searchValue);
       if (search && search !== searchValue) {
         setLoading(true);
@@ -470,6 +468,7 @@ function Search() {
 
     fetchData();
   }, [ticker]);
+
   useEffect(() => {
     console.log("Search Value:", searchValue);
     console.log("location:", location);

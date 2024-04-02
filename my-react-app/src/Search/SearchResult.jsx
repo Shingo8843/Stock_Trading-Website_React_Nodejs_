@@ -28,7 +28,7 @@ function SearchResult({
 }) {
   const [key, setKey] = useState("summary");
   return (
-    <Container>
+    <Container className="search-result-container">
       <Current
         quoteData={quoteData}
         companyData={companyData}
@@ -46,7 +46,7 @@ function SearchResult({
         id="controlled-tab-example"
         activeKey={key}
         onSelect={(k) => setKey(k)}
-        className="mb-3 custom-tabs" // Apply custom class for styling
+        className="custom-tabs" // Apply custom class for styling
       >
         <Tab eventKey="summary" title="Summary">
           <Summary

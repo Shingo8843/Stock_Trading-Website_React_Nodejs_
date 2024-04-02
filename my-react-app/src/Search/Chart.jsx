@@ -41,6 +41,9 @@ function Chart({ historicalPrices }) {
     ["year", [1]],
   ];
   const options = {
+    chart: {
+      backgroundColor: "#f8f9fa",
+    },
     rangeSelector: {
       enabled: true,
       selected: 1,
@@ -123,6 +126,7 @@ function Chart({ historicalPrices }) {
         resize: {
           enabled: true,
         },
+        opposite: true,
       },
       {
         labels: {
@@ -136,6 +140,7 @@ function Chart({ historicalPrices }) {
         height: "35%",
         offset: 0,
         lineWidth: 2,
+        opposite: true,
       },
     ],
 
@@ -190,7 +195,7 @@ function Chart({ historicalPrices }) {
     ],
   };
   return (
-    <Container fluid>
+    <Container className="chart-container">
       <HighchartsReact highcharts={Highcharts} options={options} />
     </Container>
   );

@@ -133,9 +133,6 @@ function Insights({
       categories: historicalEPSSurprises.map(
         (surprise) => surprise.period + "<br/> Surprise: " + surprise.surprise
       ),
-      title: {
-        text: "Date",
-      },
     },
     yAxis: {
       title: {

@@ -59,7 +59,7 @@ function Summary({ quoteData, companyData, peerData, hourlyPrices }) {
   return (
     <Container fluid>
       <Row>
-        <Col smd={6} variance="dark" className="text-center">
+        <Col sm={12} md={6} variance="dark" className="text-center">
           <Row>
             <Col sm={12} md={6}>
               <p></p>
@@ -117,7 +117,7 @@ function Summary({ quoteData, companyData, peerData, hourlyPrices }) {
             </Col>
           </Row>
         </Col>
-        <Col lg md={6} xs>
+        <Col sm={12} md={6} xs>
           <HighchartsReact highcharts={Highcharts} options={options} />
         </Col>
       </Row>
