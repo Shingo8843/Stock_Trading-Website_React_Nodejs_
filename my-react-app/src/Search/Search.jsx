@@ -10,7 +10,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { useSearch } from "../SearchContext";
 import { Spinner } from "react-bootstrap";
 function Search() {
-  const url = "http://localhost:8080/api/";
+  const url = "http://shingomohw38843.us-east-1.elasticbeanstalk.com/api/";
 
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -285,7 +285,7 @@ function Search() {
   async function deletePortfolioInDatabase(ticker) {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/portfolio/DELETE/${ticker}`,
+        `http://shingomohw38843.us-east-1.elasticbeanstalk.com/api/portfolio/DELETE/${ticker}`,
         {
           method: "DELETE",
           headers: {
@@ -367,13 +367,16 @@ function Search() {
   }
   async function addPortfolioToDatabase(data) {
     try {
-      const response = await fetch("http://localhost:8080/api/portfolio/ADD", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        "http://shingomohw38843.us-east-1.elasticbeanstalk.com/api/portfolio/ADD",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to add portfolio to the database.");
       }
@@ -391,7 +394,7 @@ function Search() {
   async function updatePortfolioInDatabase(ticker, data) {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/portfolio/UPDATE/${ticker}`,
+        `http://shingomohw38843.us-east-1.elasticbeanstalk.com/api/portfolio/UPDATE/${ticker}`,
         {
           method: "PUT",
           headers: {

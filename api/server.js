@@ -10,6 +10,7 @@ const path = require("path");
 app.use(Express.json());
 app.use(cors());
 app.use(Express.static("dist"));
+app.set("trust proxy", true);
 
 const CONNECT_STRING = process.env.CONNECT_STRING;
 const DATABASE_NAME = process.env.MONGO_DATABASE;

@@ -51,13 +51,16 @@ function Portfolio() {
     fetchAndUpdatePortfolio();
   }, []);
   async function fetchPortfolio() {
-    const response = await fetch("http://localhost:8080/api/portfolio/GET", {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      "http://shingomohw38843.us-east-1.elasticbeanstalk.com/api/portfolio/GET",
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Network response was not ok.");
@@ -73,12 +76,15 @@ function Portfolio() {
     }
   }
   async function fetchStockPrice(ticker) {
-    const response = await fetch(`http://localhost:8080/api/quote/${ticker}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `http://shingomohw38843.us-east-1.elasticbeanstalk.com/api/quote/${ticker}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     const data = await response.json();
     console.log(data.c);
     return data.c;
@@ -129,7 +135,7 @@ function Portfolio() {
   async function deletePortfolioInDatabase(ticker) {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/portfolio/DELETE/${ticker}`,
+        `http://shingomohw38843.us-east-1.elasticbeanstalk.com/api/portfolio/DELETE/${ticker}`,
         {
           method: "DELETE",
           headers: {
@@ -196,7 +202,7 @@ function Portfolio() {
     console.log("Update data:", data);
     try {
       const response = await fetch(
-        `http://localhost:8080/api/portfolio/UPDATE/${ticker}`,
+        `http://shingomohw38843.us-east-1.elasticbeanstalk.com/api/portfolio/UPDATE/${ticker}`,
         {
           method: "PUT",
           headers: {

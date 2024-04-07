@@ -94,13 +94,16 @@ function Watchlist() {
   );
 }
 async function fetchWatchlist() {
-  const response = await fetch("http://localhost:8080/api/watchlist/GET", {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
+  const response = await fetch(
+    "http://shingomohw38843.us-east-1.elasticbeanstalk.com/api/watchlist/GET",
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Network response was not ok.");
@@ -118,7 +121,7 @@ async function fetchWatchlist() {
 async function removeFromWatchlist(ticker) {
   try {
     const response = await fetch(
-      `http://localhost:8080/api/watchlist/DELETE/${ticker}`,
+      `http://shingomohw38843.us-east-1.elasticbeanstalk.com/api/watchlist/DELETE/${ticker}`,
       {
         method: "DELETE",
         headers: {
@@ -144,13 +147,16 @@ async function removeFromWatchlist(ticker) {
 }
 
 async function getQuote(ticker) {
-  const response = await fetch(`http://localhost:8080/api/quote/${ticker}`, {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
+  const response = await fetch(
+    `http://shingomohw38843.us-east-1.elasticbeanstalk.com/api/quote/${ticker}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Network response was not ok.");
